@@ -27,6 +27,8 @@ namespace Archimedes.Fx.Service.Repository
 
         public void SendCandleRequest(string queueName)
         {
+            _log.LogInformation("Send candle request: ");
+
             var request = new RequestCandle()
             {
                 Properties = new List<string>(),
