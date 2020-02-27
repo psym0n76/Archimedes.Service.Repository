@@ -1,6 +1,6 @@
 ﻿using System;
 using Archimedes.Library.Domain;
-using Archimedes.Library.Extensions;
+using Archimedes.Library.Hangfire;
 using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
@@ -38,8 +38,7 @@ namespace Archimedes.Fx.Service.Repository
             var config = Configuration.GetSection("AppSettings").Get<Config>();
 
             var hangfireConnection =
-                config.HangfireDatabaseName.BuildTestHangfireConnection(config.HangfireDatabaseName,
-                    config.DatabaseServer);
+                config.BuildTestHangfireConnection();
 
             services.AddHangfire(configuration => configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)

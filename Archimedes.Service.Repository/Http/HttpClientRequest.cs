@@ -21,7 +21,7 @@ namespace Archimedes.Fx.Service.Repository
         public async void PostPrice(ResponseCandle message)
         {
             var records = message.Payload.Count;
-            var url = "http://localhost:6103/api/v1/price";
+            var url = $"{_config.ApiRepositoryUrl}/price";
             var payload = new JsonContent(message.Payload);
 
             using(var  client = _httpClientFactory.CreateClient())

@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="archimedes.library" Version="1.0.37" />
+    <PackageReference Include="archimedes.library" Version="1.0.42" />
     <PackageReference Include="easynetq" Version="3.7.1" />
     <PackageReference Include="hangfire" Version="1.7.8" />
 
