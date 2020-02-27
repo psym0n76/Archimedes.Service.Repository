@@ -28,6 +28,9 @@ namespace Archimedes.Fx.Service.Repository
             services.AddHttpClient();
             services.AddLogging();
             services.AddScoped<IHangfireJob, HangfireJob>();
+            services.AddScoped<INetQSubscriber, NetQSubscribe>();
+            services.AddScoped<IHttpClientRequest, HttpClientRequest>();
+
             services.Configure<Config>(Configuration.GetSection("AppSettings"));
             services.AddSingleton(Configuration);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
