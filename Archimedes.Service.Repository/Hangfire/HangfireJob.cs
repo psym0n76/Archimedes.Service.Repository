@@ -18,10 +18,11 @@ namespace Archimedes.Fx.Service.Repository
         public void RunJob()
         {
             _log.LogInformation("Job started: ");
-            BackgroundJob.ContinueJobWith("Archimedes.Service.Repository", ()=> SubscribeToQueue());
+            //BackgroundJob.ContinueJobWith("Archimedes.Service.Repository", ()=> _subscriber.SubscribeCandleMessage());
+            BackgroundJob.ContinueJobWith("100", ()=> _subscriber.SubscribeCandleMessage());
         }
 
-        private void SubscribeToQueue()
+        public void SubscribeToQueue()
         {
             Task.Run(() => { _subscriber.SubscribeCandleMessage(); });
         }

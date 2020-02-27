@@ -38,7 +38,7 @@ namespace Archimedes.Fx.Service.Repository
             var config = Configuration.GetSection("AppSettings").Get<Config>();
 
             var hangfireConnection =
-                config.BuildTestHangfireConnection();
+                config.BuildHangfireConnection();
 
             services.AddHangfire(configuration => configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
