@@ -25,6 +25,7 @@ namespace Archimedes.Fx.Service.Repository
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpClient();
             services.AddLogging();
             services.AddScoped<IHangfireJob, HangfireJob>();
             services.Configure<Config>(Configuration.GetSection("AppSettings"));
@@ -57,6 +58,7 @@ namespace Archimedes.Fx.Service.Repository
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env,IHangfireJob job,ILogger<Startup> logger)
         {
             logger.LogInformation("Started configure:");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
