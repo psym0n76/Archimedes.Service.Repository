@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Hangfire;
 
 namespace Archimedes.Fx.Service.Repository
 {
@@ -17,7 +18,7 @@ namespace Archimedes.Fx.Service.Repository
         public void RunJob()
         {
             _log.LogInformation("Job started: ");
-            SubscribeToQueue();
+            BackgroundJob.ContinueJobWith("Archimedes.Service.Repository", ()=> SubscribeToQueue());
         }
 
         private void SubscribeToQueue()
