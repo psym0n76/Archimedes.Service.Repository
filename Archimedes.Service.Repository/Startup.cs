@@ -28,7 +28,7 @@ namespace Archimedes.Service.Repository
             services.AddHttpClient();
             services.AddLogging();
             services.AddScoped<IHttpClientRequest, HttpClientRequest>();
-            services.AddScoped<ISubscriber, Subscriber>();
+            //services.AddScoped<ISubscriber, Subscriber>();
             services.AddScoped<IMessageHandler, MessageHandler>();
 
             services.AddSingleton(Configuration);

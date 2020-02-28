@@ -4,12 +4,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Archimedes.Service.Repository
 {
-    public class Subscriber : IConsume<ResponseCandle>, ISubscriber
+    public class SubscribeCandle : IConsume<ResponseCandle>
     {
-        private readonly ILogger<Subscriber> _log;
+        private readonly ILogger<SubscribeCandle> _log;
         private readonly IMessageHandler _message;
 
-        public Subscriber(ILogger<Subscriber> log, IMessageHandler message)
+        public SubscribeCandle(ILogger<SubscribeCandle> log, IMessageHandler message)
         {
             _log = log;
             _message = message;

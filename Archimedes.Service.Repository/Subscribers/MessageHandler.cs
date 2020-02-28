@@ -9,10 +9,10 @@ namespace Archimedes.Service.Repository
     public class MessageHandler : IMessageHandler
     {
         private readonly Config _config;
-        private readonly ILogger<Subscriber> _log;
+        private readonly ILogger<SubscribeCandle> _log;
         private readonly IHttpClientRequest _client;
 
-        public MessageHandler(IHttpClientRequest client, ILogger<Subscriber> log, IOptions<Config> configuration)
+        public MessageHandler(IHttpClientRequest client, ILogger<SubscribeCandle> log, IOptions<Config> configuration)
         {
             _client = client;
             _log = log;
