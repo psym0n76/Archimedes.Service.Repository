@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Archimedes.Service.Repository
 {
@@ -41,7 +42,7 @@ namespace Archimedes.Service.Repository
             services.AddSingleton(provider => new AutoSubscriber(provider.GetRequiredService<IBus>(), Assembly.GetExecutingAssembly().GetName().Name));
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,ILogger<Startup> logger,IOptions<Config> config)
         {
             logger.LogInformation("Started configuration:");
 
@@ -50,6 +51,8 @@ namespace Archimedes.Service.Repository
                 app.UseDeveloperExceptionPage();
             }
 
+            app.ApplicationServices.GetRequiredService<AutoSubscriber>().GenerateSubscriptionId =
+                c => $"{c.ConcreteType}_{config.Value.EnvironmentName}";
             app.ApplicationServices.GetRequiredService<AutoSubscriber>().Subscribe(Assembly.GetExecutingAssembly());
 
             app.UseHttpsRedirection();

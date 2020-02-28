@@ -15,7 +15,7 @@ namespace Archimedes.Service.Repository
             _message = message;
         }
 
-        [AutoSubscriberConsumer(SubscriptionId = "Candle")]
+        //[AutoSubscriberConsumer(SubscriptionId = "Candle")]
         public void Consume(ResponseCandle message)
         {
             _log.LogInformation($"Received Candle message {message.Text}");
