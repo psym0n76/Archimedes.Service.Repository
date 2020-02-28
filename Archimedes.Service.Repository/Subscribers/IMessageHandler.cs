@@ -2,8 +2,8 @@
 
 namespace Archimedes.Service.Repository
 {
-    public interface IHttpClientRequest
+    public interface IMessageHandler
     {
-        void PostPrice(ResponseCandle message);
+        void Process<T>(T message) where T : IResponse;
     }
 }

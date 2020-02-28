@@ -1,8 +1,7 @@
-﻿using System;
+﻿using System.Reflection;
 using Archimedes.Library.Domain;
-using Archimedes.Library.Hangfire;
-using Hangfire;
-using Hangfire.SqlServer;
+using EasyNetQ;
+using EasyNetQ.AutoSubscribe;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Archimedes.Fx.Service.Repository
+namespace Archimedes.Service.Repository
 {
     public class Startup
     {
@@ -27,59 +26,40 @@ namespace Archimedes.Fx.Service.Repository
         {
             services.AddHttpClient();
             services.AddLogging();
-            services.AddScoped<IHangfireJob, HangfireJob>();
-            services.AddScoped<INetQSubscriber, NetQSubscribe>();
             services.AddScoped<IHttpClientRequest, HttpClientRequest>();
+            services.AddScoped<ISubscriber, Subscriber>();
+            services.AddScoped<IMessageHandler, MessageHandler>();
 
-            services.Configure<Config>(Configuration.GetSection("AppSettings"));
             services.AddSingleton(Configuration);
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.Configure<Config>(Configuration.GetSection("AppSettings"));
 
             var config = Configuration.GetSection("AppSettings").Get<Config>();
 
-            var hangfireConnection =
-                config.BuildHangfireConnection();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            services.AddHangfire(configuration => configuration
-                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                .UseSimpleAssemblyNameTypeSerializer()
-                .UseRecommendedSerializerSettings()
-                .UseSqlServerStorage(hangfireConnection, new SqlServerStorageOptions
-                    {
-                        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                        QueuePollInterval = TimeSpan.Zero,
-                        UseRecommendedIsolationLevel = true,
-                        UsePageLocksOnDequeue = true,
-                        DisableGlobalLocks = true
-                    }));
-
-            services.AddHangfireServer();
+            services.AddSingleton(RabbitHutch.CreateBus(config.RabbitHutchConnection));
+            services.AddSingleton(provider => new AutoSubscriber(provider.GetRequiredService<IBus>(), Assembly.GetExecutingAssembly().GetName().Name));
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,IHangfireJob job,ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,ILogger<Startup> logger)
         {
-            logger.LogInformation("Started configure:");
+            logger.LogInformation("Started configuration:");
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
+            app.ApplicationServices.GetRequiredService<AutoSubscriber>().Subscribe(Assembly.GetExecutingAssembly());
+
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthorization();
-
-            app.UseHangfireDashboard();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
-
-            job.RunJob();
         }
     }
 }

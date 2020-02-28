@@ -2,8 +2,8 @@
 
 namespace Archimedes.Service.Repository
 {
-    public interface IHttpClientRequest
+    public interface ISubscriber
     {
-        void PostPrice(ResponseCandle message);
+        void Consume(ResponseCandle message);
     }
 }

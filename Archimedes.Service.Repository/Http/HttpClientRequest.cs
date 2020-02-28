@@ -4,7 +4,7 @@ using Archimedes.Library.Message;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Archimedes.Fx.Service.Repository
+namespace Archimedes.Service.Repository
 {
     public class HttpClientRequest : IHttpClientRequest
     {
@@ -20,6 +20,12 @@ namespace Archimedes.Fx.Service.Repository
         }
         public async void PostPrice(ResponseCandle message)
         {
+            if (message.Text == null)
+            {
+                _log.LogError($"Message is null");
+                return;
+            }
+
             var records = message.Payload.Count;
             var url = $"{_config.ApiRepositoryUrl}/price";
             var payload = new JsonContent(message.Payload);

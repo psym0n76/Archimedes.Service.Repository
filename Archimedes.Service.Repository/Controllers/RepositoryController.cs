@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Archimedes.Library.Domain;
 using Microsoft.Extensions.Options;
 
-namespace Archimedes.Fx.Service.Repository.Controllers
+namespace Archimedes.Service.Repository.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -20,7 +20,7 @@ namespace Archimedes.Fx.Service.Repository.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "Repo", "Repo" , "version: "+ _config.AppVersion };
+            return new[] { "Repo", "Repo" , "version: "+ _config.AppVersion };
         }
     }
 }
