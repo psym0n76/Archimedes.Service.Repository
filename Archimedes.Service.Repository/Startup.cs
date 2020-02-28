@@ -15,7 +15,6 @@ namespace Archimedes.Service.Repository
 {
     public class Startup
     {
-        //https://www.youtube.com/watch?v=oXNslgIXIbQ logging
         public IConfiguration Configuration { get; set; }
 
         public Startup(IConfiguration configuration)
@@ -25,19 +24,18 @@ namespace Archimedes.Service.Repository
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHttpClient();
-            services.AddLogging();
-            services.AddScoped<IHttpClientRequest, HttpClientRequest>();
-
             services.AddSingleton(Configuration);
             services.Configure<Config>(Configuration.GetSection("AppSettings"));
 
             var config = Configuration.GetSection("AppSettings").Get<Config>();
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.AddHttpClient();
+            services.AddLogging();
+            services.AddScoped<IHttpClientRequest, HttpClientRequest>();
 
             services.AddSingleton(RabbitHutch.CreateBus(config.RabbitHutchConnection));
             services.AddSingleton(provider => new AutoSubscriber(provider.GetRequiredService<IBus>(), Assembly.GetExecutingAssembly().GetName().Name));
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env,ILogger<Startup> logger,IOptions<Config> config)
@@ -59,8 +57,6 @@ namespace Archimedes.Service.Repository
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
-
-           
 
             app.UseEndpoints(endpoints =>
             {

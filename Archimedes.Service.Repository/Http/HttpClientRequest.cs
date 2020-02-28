@@ -8,16 +8,18 @@ namespace Archimedes.Service.Repository
 {
     public class HttpClientRequest : IHttpClientRequest
     {
-        private readonly Config  _config;
+        private readonly Config _config;
         private readonly ILogger<HttpClientRequest> _log;
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public HttpClientRequest(IOptions<Config> config, IHttpClientFactory httpClientFactory, ILogger<HttpClientRequest> log)
+        public HttpClientRequest(IOptions<Config> config, IHttpClientFactory httpClientFactory,
+            ILogger<HttpClientRequest> log)
         {
             _config = config.Value;
             _httpClientFactory = httpClientFactory;
             _log = log;
         }
+
         public async void PostPrice(PriceResponse message)
         {
             if (message.Payload == null)
@@ -30,17 +32,16 @@ namespace Archimedes.Service.Repository
             var url = $"{_config.ApiRepositoryUrl}/price";
             var payload = new JsonContent(message.Payload);
 
-            using(var  client = _httpClientFactory.CreateClient())
+            using (var client = _httpClientFactory.CreateClient())
             {
                 var response = await client.PostAsync(url, payload);
-                if (response.IsSuccessStatusCode)
-                {
-                    _log.LogInformation($"Successfully POST {records} to {url}");
-                }
-                else
+                if (!response.IsSuccessStatusCode)
                 {
                     _log.LogError($"Failed to POST to {url}");
+                    return;
                 }
+
+                _log.LogInformation($"Successfully POST {records} to {url}");
             }
         }
     }
