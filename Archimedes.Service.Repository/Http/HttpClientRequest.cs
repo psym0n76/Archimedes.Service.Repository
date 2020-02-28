@@ -18,9 +18,9 @@ namespace Archimedes.Service.Repository
             _httpClientFactory = httpClientFactory;
             _log = log;
         }
-        public async void PostPrice(ResponsePrice message)
+        public async void PostPrice(PriceResponse message)
         {
-            if (message.Text == null)
+            if (message.Payload == null)
             {
                 _log.LogError($"Price message is null");
                 return;

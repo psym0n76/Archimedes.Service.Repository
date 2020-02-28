@@ -9,7 +9,7 @@ namespace Archimedes.Service.Repository
     {
         public void Process<T>(T message, IHttpClientRequest httpClient, ILogger<PriceSubscriber> log, Config config)
         {
-            var price = message as ResponsePrice;
+            var price = message as PriceResponse;
 
             try
             {
