@@ -12,17 +12,17 @@ namespace Archimedes.Service.Repository
         private readonly ILogger<HttpClientRequest> _log;
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public HttpClientRequest(IOptions<Config> configuration, IHttpClientFactory httpClientFactory, ILogger<HttpClientRequest> log)
+        public HttpClientRequest(IOptions<Config> config, IHttpClientFactory httpClientFactory, ILogger<HttpClientRequest> log)
         {
-            _config = configuration.Value;
+            _config = config.Value;
             _httpClientFactory = httpClientFactory;
             _log = log;
         }
-        public async void PostPrice(ResponseCandle message)
+        public async void PostPrice(ResponsePrice message)
         {
             if (message.Text == null)
             {
-                _log.LogError($"Message is null");
+                _log.LogError($"Price message is null");
                 return;
             }
 

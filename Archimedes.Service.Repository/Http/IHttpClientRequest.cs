@@ -4,6 +4,6 @@ namespace Archimedes.Service.Repository
 {
     public interface IHttpClientRequest
     {
-        void PostPrice(ResponseCandle message);
+        void PostPrice(ResponsePrice message);
     }
 }
