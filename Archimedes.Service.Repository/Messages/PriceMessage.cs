@@ -7,7 +7,7 @@ namespace Archimedes.Service.Repository
 {
     public class PriceMessage : IMessage
     {
-        public void Process<T>(T message, IHttpClientRequest httpClient, ILogger<PriceSubscriber> log, Config config)
+        public void Process<T>(T message, IHttpClientRequest httpClient, ILogger log, Config config)
         {
             var price = message as PriceResponse;
 
