@@ -32,8 +32,20 @@ namespace Archimedes.Service.Repository
             services.AddLogging();
             services.AddScoped<IHttpClientRequest, HttpClientRequest>();
 
-            services.AddSingleton(RabbitHutch.CreateBus(config.RabbitHutchConnection));
-            services.AddSingleton(provider => new AutoSubscriber(provider.GetRequiredService<IBus>(), Assembly.GetExecutingAssembly().GetName().Name));
+            services.AddSingleton<IBus>(RabbitHutch.CreateBus(config.RabbitHutchConnection));
+            services.AddSingleton<MessageDispatcher>();
+            //services.AddSingleton(provider =>
+            //    new AutoSubscriber(provider.GetRequiredService<IBus>(), Assembly.GetExecutingAssembly().GetName().Name));
+
+
+            services.AddSingleton<AutoSubscriber>(provider => new AutoSubscriber(provider.GetRequiredService<IBus>(), "example")
+            {
+                AutoSubscriberMessageDispatcher = provider.GetRequiredService<MessageDispatcher>()
+            });
+
+            // message handlers
+            services.AddScoped<PriceSubscriber>();
+
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
