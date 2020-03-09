@@ -24,7 +24,7 @@ namespace Archimedes.Service.Repository
 
             if (price != null)
                 log.LogInformation(
-                    $"Received message: {price.Status} and {price.Text} and {price.Payload.GetType()}");
+                    $"Received message: {price.Status} and {price.Text} and {price.Payload.GetType().FullName}");
         }
     }
 }

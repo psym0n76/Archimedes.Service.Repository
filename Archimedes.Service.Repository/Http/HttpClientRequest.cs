@@ -29,7 +29,7 @@ namespace Archimedes.Service.Repository
             }
 
             var records = message.Payload.Count;
-            var url = $"{_config.ApiRepositoryUrl}/price";
+            var url = $"{_config.ApiRepositoryUrl}/price"; //this needs to be a 
             var payload = new JsonContent(message.Payload);
 
             using (var client = _httpClientFactory.CreateClient())

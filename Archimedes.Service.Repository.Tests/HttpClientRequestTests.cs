@@ -22,17 +22,18 @@ namespace Archimedes.Service.Repository.Tests
 
             //var priceResponse = new PriceResponse()
             //{
-            //    Status = "TestStatus", Text = "TestText",
-            //    Payload = new List<PriceDto>() {new PriceDto() {Market = "TestGBPUSD"}}
+            //    Status = "TestStatus",
+            //    Text = "TestText",
+            //    Payload = new List<PriceDto>() { new PriceDto() { Market = "TestGBPUSD" } }
             //};
 
             //mockHttpClientFactory.Setup(m => m.CreateClient());
 
-            //var subject = new HttpClientRequest(mockConfig.Object, mockHttpClientFactory.Object,mockLogger.Object);
+            //var subject = new HttpClientRequest(mockConfig.Object, mockHttpClientFactory.Object, mockLogger.Object);
 
             //subject.PostPrice(priceResponse);
 
-            //Assert.DoesNotThrow(()=>subject.PostPrice(priceResponse));
+            //Assert.DoesNotThrow(() => subject.PostPrice(priceResponse));
         }
     }
 }
