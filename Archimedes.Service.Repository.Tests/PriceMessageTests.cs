@@ -15,7 +15,7 @@ namespace Archimedes.Service.Repository.Tests
         [Test]
         public void Should_InvokePostPrice_WhenPriceMessageIsReceived()
         {
-            var mockHttpClientRequest = new Mock<IHttpClientRequest>();
+            var mockHttpClientRequest = new Mock<IPriceClient>();
             var mockLogger = new Mock<ILogger>();
 
             var config = new Config();
@@ -26,14 +26,14 @@ namespace Archimedes.Service.Repository.Tests
                 Payload = new List<PriceDto>() {new PriceDto() {Market = "TestGBPUSD"}}
             };
 
-            mockHttpClientRequest.Setup(m => m.PostPrice(priceResponse));
+            mockHttpClientRequest.Setup(m => m.Post(priceResponse));
 
             try
             {
                 subject.Process(priceResponse, mockHttpClientRequest.Object, mockLogger.Object, config);
                 Assert.IsTrue(true);
             }
-            catch (Exception e)
+            catch
             {
                 Assert.IsTrue(false);
             }
@@ -42,7 +42,7 @@ namespace Archimedes.Service.Repository.Tests
         [Test]
         public void Should_NotThrowException_WhenPriceMessageIsReceived()
         {
-            var mockHttpClientRequest = new Mock<IHttpClientRequest>();
+            var mockHttpClientRequest = new Mock<IPriceClient>();
             var mockLogger = new Mock<ILogger>();
             var config = new Config();
             var subject = new PriceMessage();
@@ -53,7 +53,7 @@ namespace Archimedes.Service.Repository.Tests
                 Payload = new List<PriceDto>() {new PriceDto() {Market = "TestGBPUSD"}}
             };
 
-            mockHttpClientRequest.Setup(m => m.PostPrice(priceResponse));
+            mockHttpClientRequest.Setup(m => m.Post(priceResponse));
 
             Assert.DoesNotThrow(() =>
                 {

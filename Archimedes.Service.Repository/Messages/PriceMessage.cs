@@ -7,13 +7,13 @@ namespace Archimedes.Service.Repository
 {
     public class PriceMessage : IMessage
     {
-        public void Process<T>(T message, IHttpClientRequest httpClient, ILogger log, Config config)
+        public void Process<T>(T message, IPriceClient httpClient, ILogger log, Config config)
         {
             var price = message as PriceResponse;
 
             try
             {
-                httpClient.PostPrice(price);
+                httpClient.Post(price);
             }
             catch (Exception e)
             {

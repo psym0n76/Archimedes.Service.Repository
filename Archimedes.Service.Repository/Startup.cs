@@ -30,7 +30,7 @@ namespace Archimedes.Service.Repository
             var config = Configuration.GetSection("AppSettings").Get<Config>();
             services.AddHttpClient();
             services.AddLogging();
-            services.AddScoped<IHttpClientRequest, HttpClientRequest>();
+            services.AddScoped<IPriceClient, PriceClient>();
 
             services.AddSingleton<IBus>(RabbitHutch.CreateBus(config.RabbitHutchConnection));
             services.AddSingleton<MessageDispatcher>();
@@ -45,7 +45,6 @@ namespace Archimedes.Service.Repository
 
             // message handlers
             services.AddScoped<PriceSubscriber>();
-
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }

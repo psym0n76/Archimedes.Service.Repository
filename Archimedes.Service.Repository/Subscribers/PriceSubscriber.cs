@@ -10,9 +10,9 @@ namespace Archimedes.Service.Repository
     {
         private readonly ILogger<PriceSubscriber> _log;
         private readonly Config _config;
-        private readonly IHttpClientRequest _httpClient;
+        private readonly IPriceClient _httpClient;
 
-        public PriceSubscriber(ILogger<PriceSubscriber> log, IOptions<Config> config, IHttpClientRequest client)
+        public PriceSubscriber(ILogger<PriceSubscriber> log, IOptions<Config> config, IPriceClient client)
         {
             _config = config.Value;
             _log = log;
