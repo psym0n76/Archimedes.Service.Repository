@@ -39,12 +39,12 @@ namespace Archimedes.Service.Repository
 
             var response = await _client.PostAsync(url, payload);
 
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                _log.LogError($"Failed to POST to {url}");
+                _log.LogInformation($"Successfully POST {records} to {url}");
             }
 
-            _log.LogInformation($"Successfully POST {records} to {url}");
+            _log.LogError($"Failed to POST to {url}");
         }
     }
 }
