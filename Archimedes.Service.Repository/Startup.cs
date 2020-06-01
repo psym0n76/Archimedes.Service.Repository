@@ -63,8 +63,11 @@ namespace Archimedes.Service.Repository
                 app.UseDeveloperExceptionPage();
             }
 
-            app.ApplicationServices.GetRequiredService<AutoSubscriber>().GenerateSubscriptionId =
-                c => $"{c.ConcreteType.Name}_{config.Value.EnvironmentName}";
+            // testing 
+            //app.ApplicationServices.GetRequiredService<AutoSubscriber>().GenerateSubscriptionId =
+            //    c => $"{c.ConcreteType.Name}_{config.Value.EnvironmentName}";
+
+
             app.ApplicationServices.GetRequiredService<AutoSubscriber>().Subscribe(Assembly.GetExecutingAssembly());
 
             app.UseHttpsRedirection();
