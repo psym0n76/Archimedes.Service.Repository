@@ -38,10 +38,10 @@ namespace Archimedes.Service.Repository
             //    new AutoSubscriber(provider.GetRequiredService<IBus>(), Assembly.GetExecutingAssembly().GetName().Name));
 
 
-            services.AddSingleton<AutoSubscriber>(provider => new AutoSubscriber(provider.GetRequiredService<IBus>(), "example")
-            {
-                AutoSubscriberMessageDispatcher = provider.GetRequiredService<MessageDispatcher>()
-            });
+            //services.AddSingleton<AutoSubscriber>(provider => new AutoSubscriber(provider.GetRequiredService<IBus>(),"subs:")
+            //{
+            //    AutoSubscriberMessageDispatcher = provider.GetRequiredService<MessageDispatcher>()
+            //});
 
             //services.AddHostedService<TestService>();
 
