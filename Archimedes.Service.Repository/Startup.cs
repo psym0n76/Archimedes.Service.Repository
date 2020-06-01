@@ -43,6 +43,8 @@ namespace Archimedes.Service.Repository
                 AutoSubscriberMessageDispatcher = provider.GetRequiredService<MessageDispatcher>()
             });
 
+            //services.AddHostedService<TestService>();
+
             // message handlers
             services.AddScoped<PriceSubscriber>();
 
