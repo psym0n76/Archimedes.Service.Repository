@@ -28,9 +28,12 @@ namespace Archimedes.Service.Repository
             services.Configure<Config>(Configuration.GetSection("AppSettings"));
 
             var config = Configuration.GetSection("AppSettings").Get<Config>();
-            services.AddHttpClient();
+            //services.AddHttpClient();
+
+            services.AddHttpClient<IPriceClient, PriceClient>();
+
             services.AddLogging();
-            services.AddScoped<IPriceClient, PriceClient>();
+            //services.AddScoped<IPriceClient, PriceClient>();
 
             services.AddSingleton<IBus>(RabbitHutch.CreateBus(config.RabbitHutchConnection));
             services.AddSingleton<MessageDispatcher>();
