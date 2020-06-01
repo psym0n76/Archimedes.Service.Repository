@@ -8,7 +8,7 @@ namespace Archimedes.Service.Repository
         {
             switch (message)
             {
-                case PriceResponse c:
+                case ResponsePrice c:
                 {
                     return new PriceMessage();
                 }

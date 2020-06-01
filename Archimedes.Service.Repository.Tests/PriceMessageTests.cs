@@ -20,7 +20,7 @@ namespace Archimedes.Service.Repository.Tests
 
             var config = new Config();
             var subject = new PriceMessage();
-            var priceResponse = new PriceResponse()
+            var priceResponse = new ResponsePrice()
             {
                 Status = "TestStatus", Text = "TestText",
                 Payload = new List<PriceDto>() {new PriceDto() {Market = "TestGBPUSD"}}
@@ -47,7 +47,7 @@ namespace Archimedes.Service.Repository.Tests
             var config = new Config();
             var subject = new PriceMessage();
 
-            var priceResponse = new PriceResponse()
+            var priceResponse = new ResponsePrice()
             {
                 Status = "TestStatus", Text = "TestText",
                 Payload = new List<PriceDto>() {new PriceDto() {Market = "TestGBPUSD"}}

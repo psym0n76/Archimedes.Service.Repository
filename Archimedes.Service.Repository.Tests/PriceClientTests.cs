@@ -51,9 +51,9 @@ namespace Archimedes.Service.Repository.Tests
             return new PriceClient(mockConfig.Object, client, mockLogger.Object);
         }
 
-        private static PriceResponse MockPriceResponse()
+        private static ResponsePrice MockPriceResponse()
         {
-            var priceResponse = new PriceResponse()
+            var priceResponse = new ResponsePrice()
             {
                 Status = "TestStatus",
                 Text = "TestText",

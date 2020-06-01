@@ -25,7 +25,7 @@ namespace Archimedes.Service.Repository
             _log = log; 
         }
 
-        public async Task Post(PriceResponse message)
+        public async Task Post(ResponsePrice message)
         {
             if (message.Payload == null)
             {

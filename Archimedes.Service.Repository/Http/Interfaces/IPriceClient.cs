@@ -5,6 +5,6 @@ namespace Archimedes.Service.Repository
 {
     public interface IPriceClient
     {
-        Task Post(PriceResponse message);
+        Task Post(ResponsePrice message);
     }
 }

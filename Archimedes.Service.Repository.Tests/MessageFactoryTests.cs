@@ -9,7 +9,7 @@ namespace Archimedes.Service.Repository.Tests
         [Test]
         public void Should_ReturnPriceMessage_WhenInputPriceResponseReceived()
         {
-            var message = new PriceResponse();
+            var message = new ResponsePrice();
             var subject = MessageHandlerFactory.Get(message);
 
             Assert.IsNotNull(subject);
