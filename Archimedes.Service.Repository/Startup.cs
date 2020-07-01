@@ -33,20 +33,20 @@ namespace Archimedes.Service.Repository
             services.AddHttpClient<IPriceClient, PriceClient>();
 
             services.AddLogging();
-            //services.AddScoped<IPriceClient, PriceClient>();
 
-            services.AddSingleton<IBus>(RabbitHutch.CreateBus(config.RabbitHutchConnection));
+            services.AddSingleton(RabbitHutch.CreateBus(config.RabbitHutchConnection));
             services.AddSingleton<MessageDispatcher>();
-            //services.AddSingleton(provider =>
-            //    new AutoSubscriber(provider.GetRequiredService<IBus>(), Assembly.GetExecutingAssembly().GetName().Name));
+            services.AddSingleton(provider =>
+                new AutoSubscriber(provider.GetRequiredService<IBus>(), Assembly.GetExecutingAssembly().GetName().Name));
 
 
-            services.AddSingleton<AutoSubscriber>(provider => new AutoSubscriber(provider.GetRequiredService<IBus>(), "subs:")
-            {
-                AutoSubscriberMessageDispatcher = provider.GetRequiredService<MessageDispatcher>()
-            });
+            //services.AddSingleton<AutoSubscriber>(provider => new AutoSubscriber(provider.GetRequiredService<IBus>(), "subs:")
+            //{
+            //    AutoSubscriberMessageDispatcher = provider.GetRequiredService<MessageDispatcher>()
+            //});
 
-            //services.AddHostedService<TestService>();
+            //services.AddHostedService<TestService>();u go ahead
+
 
             // message handlers
             services.AddScoped<PriceSubscriber>();
@@ -66,9 +66,11 @@ namespace Archimedes.Service.Repository
                 app.UseDeveloperExceptionPage();
             }
 
+
             // testing 
             app.ApplicationServices.GetRequiredService<AutoSubscriber>().GenerateSubscriptionId =
-                c => $"{c.ConcreteType.Name}_{config.Value.EnvironmentName}";
+                c => $"{c.ConcreteType.Name}";
+
 
             app.ApplicationServices.GetRequiredService<AutoSubscriber>().Subscribe(Assembly.GetExecutingAssembly());
 
