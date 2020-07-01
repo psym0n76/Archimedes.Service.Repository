@@ -66,7 +66,6 @@ namespace Archimedes.Service.Repository
             }
 
 
-            // testing 
             app.ApplicationServices.GetRequiredService<AutoSubscriber>().GenerateSubscriptionId =
                 c => $"{c.ConcreteType.Name}";
 
