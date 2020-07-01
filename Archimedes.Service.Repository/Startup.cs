@@ -28,9 +28,8 @@ namespace Archimedes.Service.Repository
             services.Configure<Config>(Configuration.GetSection("AppSettings"));
 
             var config = Configuration.GetSection("AppSettings").Get<Config>();
-            //services.AddHttpClient();
 
-            services.AddHttpClient<IPriceClient, PriceClient>();
+            services.AddHttpClient<IClient, HttpClientHandler>();
 
             services.AddLogging();
 

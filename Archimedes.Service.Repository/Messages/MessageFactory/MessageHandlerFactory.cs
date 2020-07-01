@@ -13,6 +13,11 @@ namespace Archimedes.Service.Repository
                     return new PriceMessage();
                 }
 
+                case ResponseCandle c:
+                {
+                    return new CandleMessage();
+                }
+
                 default:
                 {
                     return null;

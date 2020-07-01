@@ -15,7 +15,7 @@ namespace Archimedes.Service.Repository.Tests
         [Test]
         public void Should_InvokePostPrice_WhenPriceMessageIsReceived()
         {
-            var mockHttpClientRequest = new Mock<IPriceClient>();
+            var mockHttpClientRequest = new Mock<IClient>();
             var mockLogger = new Mock<ILogger>();
 
             var config = new Config();
@@ -42,7 +42,7 @@ namespace Archimedes.Service.Repository.Tests
         [Test]
         public void Should_NotThrowException_WhenPriceMessageIsReceived()
         {
-            var mockHttpClientRequest = new Mock<IPriceClient>();
+            var mockHttpClientRequest = new Mock<IClient>();
             var mockLogger = new Mock<ILogger>();
             var config = new Config();
             var subject = new PriceMessage();

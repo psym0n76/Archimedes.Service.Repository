@@ -5,6 +5,6 @@ namespace Archimedes.Service.Repository
 {
     public interface IMessage
     {
-        void Process<T>(T message, IPriceClient httpClient, ILogger log, Config config);
+        void Process<T>(T message, IClient httpClient, ILogger log, Config config);
     }
 }
