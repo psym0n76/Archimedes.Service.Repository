@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace Archimedes.Service.Repository
 {
-    public class PriceSubscriber : IConsume<ResponsePrice> , IConsume<RequestPrice>
+    public class PriceSubscriber : IConsume<ResponsePrice>
     {
         private readonly ILogger<PriceSubscriber> _log;
         private readonly Config _config;
@@ -22,14 +22,6 @@ namespace Archimedes.Service.Repository
         public void Consume(ResponsePrice message)
         {
             _log.LogInformation($"Received ResponsePrice message {message.Text}");
-
-            var handler = MessageHandlerFactory.Get(message);
-            handler.Process(message, _httpClient, _log, _config);
-        }
-
-        public void Consume(RequestPrice message)
-        {
-            _log.LogInformation($"Received RequestPrice message {message.Text}");
 
             var handler = MessageHandlerFactory.Get(message);
             handler.Process(message, _httpClient, _log, _config);
