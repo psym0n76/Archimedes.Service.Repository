@@ -23,7 +23,7 @@ namespace Archimedes.Service.Repository.Tests
             var priceResponse = new ResponsePrice()
             {
                 Status = "TestStatus", Text = "TestText",
-                //Payload = new List<PriceDto>() {new PriceDto() {Market = "TestGBPUSD"}}
+                Payload = new List<PriceDto>() {new PriceDto() {Market = "TestGBPUSD"}}
             };
 
             mockHttpClientRequest.Setup(m => m.Post(priceResponse));
@@ -50,7 +50,7 @@ namespace Archimedes.Service.Repository.Tests
             var priceResponse = new ResponsePrice()
             {
                 Status = "TestStatus", Text = "TestText",
-                //Payload = new List<PriceDto>() {new PriceDto() {Market = "TestGBPUSD"}}
+                Payload = new List<PriceDto>() {new PriceDto() {Market = "TestGBPUSD"}}
             };
 
             mockHttpClientRequest.Setup(m => m.Post(priceResponse));

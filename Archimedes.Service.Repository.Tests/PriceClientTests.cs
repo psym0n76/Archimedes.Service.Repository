@@ -57,7 +57,7 @@ namespace Archimedes.Service.Repository.Tests
             {
                 Status = "TestStatus",
                 Text = "TestText",
-                //Payload = new List<PriceDto>() { new PriceDto() { Market = "TestGBPUSD" } }
+                Payload = new List<PriceDto>() { new PriceDto() { Market = "TestGBPUSD" } }
             };
 
             return priceResponse;
