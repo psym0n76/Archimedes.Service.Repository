@@ -35,14 +35,14 @@ namespace Archimedes.Service.Repository
 
             services.AddSingleton(RabbitHutch.CreateBus(config.RabbitHutchConnection));
             services.AddSingleton<MessageDispatcher>();
-            services.AddSingleton(provider =>
-                new AutoSubscriber(provider.GetRequiredService<IBus>(), Assembly.GetExecutingAssembly().GetName().Name));
+            //services.AddSingleton(provider =>
+            //    new AutoSubscriber(provider.GetRequiredService<IBus>(), Assembly.GetExecutingAssembly().GetName().Name));
 
 
-            //services.AddSingleton<AutoSubscriber>(provider => new AutoSubscriber(provider.GetRequiredService<IBus>(), "subs:")
-            //{
-            //    AutoSubscriberMessageDispatcher = provider.GetRequiredService<MessageDispatcher>()
-            //});
+            services.AddSingleton<AutoSubscriber>(provider => new AutoSubscriber(provider.GetRequiredService<IBus>(), "subs:")
+            {
+                AutoSubscriberMessageDispatcher = provider.GetRequiredService<MessageDispatcher>()
+            });
 
             //services.AddHostedService<TestService>();u go ahead
 
