@@ -43,8 +43,11 @@ namespace Archimedes.Service.Repository
             {
                 _log.LogInformation($"Successfully POST {records} to {url}");
             }
+            else
+            {
+                _log.LogError($"Failed to POST to {url}");
+            }
 
-            _log.LogError($"Failed to POST to {url}");
         }
 
         public async Task Post(ResponsePrice message)
@@ -66,8 +69,11 @@ namespace Archimedes.Service.Repository
                 {
                     _log.LogInformation($"Successfully POST {records} to {url}");
                 }
+                else
+                {
+                    _log.LogError($"Failed to POST to {url}");
+                }
 
-                _log.LogError($"Failed to POST to {url}");
             }
 
         }
