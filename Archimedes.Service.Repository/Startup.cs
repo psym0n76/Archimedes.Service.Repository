@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using Archimedes.Library.Domain;
 using EasyNetQ;
 using EasyNetQ.AutoSubscribe;
@@ -24,6 +26,9 @@ namespace Archimedes.Service.Repository
 
         public void ConfigureServices(IServiceCollection services)
         {
+
+            Thread.Sleep(2000);
+
             services.AddSingleton(Configuration);
             services.Configure<Config>(Configuration.GetSection("AppSettings"));
 
