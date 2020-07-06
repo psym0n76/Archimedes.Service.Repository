@@ -58,27 +58,6 @@ namespace Archimedes.Service.Repository
             });
         }
 
-        private  void RabbitConnectionValidator(Config config)
-        {
-
-            while (true)
-            {
-                try
-                {
-                    var c = RabbitHutch.CreateBus(config.RabbitHutchConnection);
-                    if (c.IsConnected)
-                    {
-                        c.Dispose();
-                        break;
-                    }
-                }
-                catch (Exception e)
-                {
-                    Thread.Sleep(5000);
-                }
-            }
-        }
-
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env,ILogger<Startup> logger,IOptions<Config> config)
         {
             logger.LogInformation("Started configuration: Waiting 10 Secs for Rabbit");
