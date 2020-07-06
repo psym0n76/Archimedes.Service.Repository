@@ -35,27 +35,28 @@ namespace Archimedes.Service.Repository
 
             var config = Configuration.GetSection("AppSettings").Get<Config>();
 
-            services.AddHttpClient<IClient, HttpClientHandler>();
-
-            services.AddLogging();
-
-            //services.AddHostedService<TestService>();u go ahead
-
-            // message handlersadd a startup derlay
-            services.AddScoped<PriceSubscriber>();
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-
-            services.AddSingleton(RabbitHutch.CreateBus(config.RabbitHutchConnection));
-
             while (true)
             {
                 if (RabbitHutch.CreateBus(config.RabbitHutchConnection).IsConnected)
                 {
                     break;
                 }
+                Thread.Sleep(1500);
             }
 
+            services.AddHttpClient<IClient, HttpClientHandler>();
+
+            services.AddLogging();
+
+            //services.AddHostedService<TestService>();u go ahead
+           // message handlersadd a startup derlay
+            services.AddScoped<PriceSubscriber>();
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+
+
+            services.AddSingleton(RabbitHutch.CreateBus(config.RabbitHutchConnection));
 
 
             services.AddSingleton<MessageDispatcher>();
