@@ -26,6 +26,9 @@ namespace Archimedes.Service.Repository
 
         public void ConfigureServices(IServiceCollection services)
         {
+
+            Thread.Sleep(10000);
+
             services.AddSingleton(Configuration);
             services.Configure<Config>(Configuration.GetSection("AppSettings"));
 
@@ -38,7 +41,7 @@ namespace Archimedes.Service.Repository
             //services.AddHostedService<TestService>();u go ahead
 
 
-            // message handlers
+            // message handlersadd a startup derlay
             services.AddScoped<PriceSubscriber>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
@@ -58,6 +61,8 @@ namespace Archimedes.Service.Repository
             //https://www.taithienbo.com/how-to-auto-start-and-keep-an-asp-net-core-web-application-and-keep-it-running-on-iis/
 
             logger.LogInformation("Started configuration:");
+
+            Thread.Sleep(10000);
 
             if (env.IsDevelopment())
             {
