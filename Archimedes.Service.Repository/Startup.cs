@@ -1,4 +1,5 @@
-﻿using System.Net.NetworkInformation;
+﻿using System;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,18 +41,29 @@ namespace Archimedes.Service.Repository
 
             //services.AddHostedService<TestService>();u go ahead
 
-
             // message handlersadd a startup derlay
             services.AddScoped<PriceSubscriber>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddSingleton(RabbitHutch.CreateBus(config.RabbitHutchConnection));
+
+            while (true)
+            {
+                if (RabbitHutch.CreateBus(config.RabbitHutchConnection).IsConnected)
+                {
+                    break;
+                }
+            }
+
+
+
             services.AddSingleton<MessageDispatcher>();
 
             services.AddSingleton<AutoSubscriber>(provider => new AutoSubscriber(provider.GetRequiredService<IBus>(), "subs:")
             {
                 AutoSubscriberMessageDispatcher = provider.GetRequiredService<MessageDispatcher>()
+                
             });
         }
 
@@ -64,32 +76,44 @@ namespace Archimedes.Service.Repository
 
 
 
-            //var ping = new Ping();
-            //var retry = 1;
+            var ping = new Ping();
+            var retry = 1;
 
             //while (true)
             //{
 
             //    logger.LogInformation($"Pinging ({retry}): 127.0.0.1:5673");
-            //    var reply = ping.Send("localhost:5673");
 
-            //    if (reply == null)
+
+            //    try
             //    {
-            //        logger.LogInformation("Pinging: ERROR");
-            //        break;
+            //        var reply = ping.Send("127.0.0.1:5673");
+
+            //        if (reply == null)
+            //        {
+            //            logger.LogInformation("Pinging: ERROR");
+            //            break;
+            //        }
+                    
+            //        if (reply.Status == IPStatus.Success)
+            //        {
+            //            logger.LogInformation("Pinging: SUCCESS");
+            //            break;
+            //        }
+
+            //        retry++;
+            //        Thread.Sleep(1000);
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        Console.WriteLine(e);
+            //        logger.LogError($"Pinging: ERROR {e.Message} {e.StackTrace}");
+            //        Thread.Sleep(1000);
             //    }
 
-            //    if (reply.Status == IPStatus.Success)
-            //    {
-            //        logger.LogInformation("Pinging: SUCCESS");
-            //        break;
-            //    }
-
-            //    retry++;
-            //    Thread.Sleep(10);
             //}
 
-            Thread.Sleep(200);
+            //Thread.Sleep(5000);
 
             if (env.IsDevelopment())
             {
