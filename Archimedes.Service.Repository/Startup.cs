@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Archimedes.Library.Domain;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 
 namespace Archimedes.Service.Repository
 {
@@ -60,7 +62,34 @@ namespace Archimedes.Service.Repository
 
             logger.LogInformation("Started configuration:");
 
-            Thread.Sleep(10000);
+
+
+            //var ping = new Ping();
+            //var retry = 1;
+
+            //while (true)
+            //{
+
+            //    logger.LogInformation($"Pinging ({retry}): 127.0.0.1:5673");
+            //    var reply = ping.Send("localhost:5673");
+
+            //    if (reply == null)
+            //    {
+            //        logger.LogInformation("Pinging: ERROR");
+            //        break;
+            //    }
+
+            //    if (reply.Status == IPStatus.Success)
+            //    {
+            //        logger.LogInformation("Pinging: SUCCESS");
+            //        break;
+            //    }
+
+            //    retry++;
+            //    Thread.Sleep(10);
+            //}
+
+            Thread.Sleep(200);
 
             if (env.IsDevelopment())
             {
@@ -68,8 +97,7 @@ namespace Archimedes.Service.Repository
             }
 
 
-            app.ApplicationServices.GetRequiredService<AutoSubscriber>().GenerateSubscriptionId =
-                c => $"{c.ConcreteType.Name}";
+            app.ApplicationServices.GetRequiredService<AutoSubscriber>().GenerateSubscriptionId = c => $"{c.ConcreteType.Name}";
 
 
             app.ApplicationServices.GetRequiredService<AutoSubscriber>().Subscribe(Assembly.GetExecutingAssembly());
