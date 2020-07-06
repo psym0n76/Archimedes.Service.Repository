@@ -27,8 +27,6 @@ namespace Archimedes.Service.Repository
         public void ConfigureServices(IServiceCollection services)
         {
 
-            Thread.Sleep(10000);
-
             services.AddSingleton(Configuration);
             services.Configure<Config>(Configuration.GetSection("AppSettings"));
 
