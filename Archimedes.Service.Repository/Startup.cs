@@ -81,21 +81,18 @@ namespace Archimedes.Service.Repository
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env,ILogger<Startup> logger,IOptions<Config> config)
         {
+            logger.LogInformation("Started configuration: Waiting 10 Secs for Rabbit");
             Thread.Sleep(10000);
+            logger.LogInformation("Started configuration: Finished waiting for Rabbit");
             //explains how to setup the app pool to autostart the application
             //https://www.taithienbo.com/how-to-auto-start-and-keep-an-asp-net-core-web-application-and-keep-it-running-on-iis/
-
-            logger.LogInformation("Started configuration:");
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-
             app.ApplicationServices.GetRequiredService<AutoSubscriber>().GenerateSubscriptionId = c => $"{c.ConcreteType.Name}";
-
-
             app.ApplicationServices.GetRequiredService<AutoSubscriber>().Subscribe(Assembly.GetExecutingAssembly());
 
             app.UseHttpsRedirection();
