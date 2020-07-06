@@ -35,13 +35,31 @@ namespace Archimedes.Service.Repository
 
             var config = Configuration.GetSection("AppSettings").Get<Config>();
 
+
+            
+
             while (true)
             {
-                if (RabbitHutch.CreateBus(config.RabbitHutchConnection).IsConnected)
+                //if (RabbitHutch.CreateBus(config.RabbitHutchConnection).IsConnected)
+                //{
+                //    break;
+                //}
+
+                try
                 {
-                    break;
+                    var c = RabbitHutch.CreateBus(config.RabbitHutchConnection);
+                    if (c.IsConnected)
+                    {
+                        c.Dispose();
+                        break;
+                    }
                 }
-                Thread.Sleep(1500);
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Thread.Sleep(5000);
+                }
+
             }
 
             services.AddHttpClient<IClient, HttpClientHandler>();
