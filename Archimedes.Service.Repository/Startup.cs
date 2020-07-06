@@ -26,9 +26,6 @@ namespace Archimedes.Service.Repository
 
         public void ConfigureServices(IServiceCollection services)
         {
-
-            Thread.Sleep(2000);
-
             services.AddSingleton(Configuration);
             services.Configure<Config>(Configuration.GetSection("AppSettings"));
 
@@ -38,17 +35,6 @@ namespace Archimedes.Service.Repository
 
             services.AddLogging();
 
-            services.AddSingleton(RabbitHutch.CreateBus(config.RabbitHutchConnection));
-            services.AddSingleton<MessageDispatcher>();
-            //services.AddSingleton(provider =>
-            //    new AutoSubscriber(provider.GetRequiredService<IBus>(), Assembly.GetExecutingAssembly().GetName().Name));
-
-
-            services.AddSingleton<AutoSubscriber>(provider => new AutoSubscriber(provider.GetRequiredService<IBus>(), "subs:")
-            {
-                AutoSubscriberMessageDispatcher = provider.GetRequiredService<MessageDispatcher>()
-            });
-
             //services.AddHostedService<TestService>();u go ahead
 
 
@@ -56,6 +42,14 @@ namespace Archimedes.Service.Repository
             services.AddScoped<PriceSubscriber>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+            services.AddSingleton(RabbitHutch.CreateBus(config.RabbitHutchConnection));
+            services.AddSingleton<MessageDispatcher>();
+
+            services.AddSingleton<AutoSubscriber>(provider => new AutoSubscriber(provider.GetRequiredService<IBus>(), "subs:")
+            {
+                AutoSubscriberMessageDispatcher = provider.GetRequiredService<MessageDispatcher>()
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env,ILogger<Startup> logger,IOptions<Config> config)
