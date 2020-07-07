@@ -21,7 +21,7 @@ namespace Archimedes.Service.Repository
 
         public void Consume(ResponsePrice message)
         {
-            _log.LogInformation($"Received ResponsePrice message {message.Text}");
+            _log.LogInformation($"Received ResponsePrice message {message}");
 
             var handler = MessageHandlerFactory.Get(message);
             handler.Process(message, _httpClient, _log, _config);
