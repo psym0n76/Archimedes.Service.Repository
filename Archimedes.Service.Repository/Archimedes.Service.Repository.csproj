@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="archimedes.library" Version="1.0.79" />
-    <PackageReference Include="easynetq" Version="3.7.1" />
+    <PackageReference Include="archimedes.library" Version="1.0.80" />
+    <PackageReference Include="easynetq" Version="5.2.0" />
 
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
 
