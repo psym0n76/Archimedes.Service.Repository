@@ -1,8 +1,5 @@
-﻿using System;
-using System.Net.NetworkInformation;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
 using Archimedes.Library.Domain;
 using EasyNetQ;
 using EasyNetQ.AutoSubscribe;
@@ -13,15 +10,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.Net.Http.Headers;
 
 namespace Archimedes.Service.Repository
 {
     public class Startup
     {
         public IConfiguration Configuration { get; set; }
-        private readonly ILogger<Startup> _logger;
 
         public Startup(IConfiguration configuration)
         {
@@ -36,7 +30,6 @@ namespace Archimedes.Service.Repository
 
             var config = Configuration.GetSection("AppSettings").Get<Config>();
 
-
             services.AddHttpClient<IClient, HttpClientHandler>();
 
             services.AddLogging();
@@ -49,20 +42,19 @@ namespace Archimedes.Service.Repository
 
 
             services.AddSingleton(RabbitHutch.CreateBus(config.RabbitHutchConnection));
-
             services.AddSingleton<MessageDispatcher>();
-            services.AddSingleton<AutoSubscriber>(provider => new AutoSubscriber(provider.GetRequiredService<IBus>(), "subs:")
+            services.AddSingleton(provider => new AutoSubscriber(provider.GetRequiredService<IBus>(), "subs:")
             {
                 AutoSubscriberMessageDispatcher = provider.GetRequiredService<MessageDispatcher>()
-                
             });
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,ILogger<Startup> logger,IOptions<Config> config)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,ILogger<Startup> logger)
         {
             logger.LogInformation("Started configuration: Waiting 10 Secs for Rabbit");
             Thread.Sleep(10000);
             logger.LogInformation("Started configuration: Finished waiting for Rabbit");
+
             //explains how to setup the app pool to autostart the application
             //https://www.taithienbo.com/how-to-auto-start-and-keep-an-asp-net-core-web-application-and-keep-it-running-on-iis/
 
