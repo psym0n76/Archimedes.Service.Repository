@@ -10,43 +10,38 @@ namespace Archimedes.Service.Repository
 {
     public class HttpClientHandler : IClient
     {
-        private readonly Config _config;
-        private readonly ILogger<HttpClientHandler> _log;
+        private readonly ILogger<HttpClientHandler> _logger;
         private readonly HttpClient _client;
 
         //https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?view=aspnetcore-3.1
 
-        public HttpClientHandler(IOptions<Config> config, HttpClient httpClient, ILogger<HttpClientHandler> log)
+        public HttpClientHandler(IOptions<Config> config, HttpClient httpClient, ILogger<HttpClientHandler> logger)
         {
             httpClient.BaseAddress = new Uri($"{config.Value.ApiRepositoryUrl}");
             httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
             _client = httpClient;
-            _config = config.Value;
-            _log = log;
+            _logger = logger;
         }
 
         public async Task Post(ResponseCandle message)
         {
             if (message.Payload == null)
             {
-                _log.LogError($"Price message is null");
+                _logger.LogError($"Candle payload is empty");
                 return;
             }
 
-            var records = message.Payload.Count;
-            var url = $"{_config.ApiRepositoryUrl}/candle";
             var payload = new JsonContent(message.Payload);
+            var response = await _client.PostAsync("candle", payload);
 
-            var response = await _client.PostAsync(url, payload);
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning($"Failed to Post {response.ReasonPhrase} from {_client.BaseAddress}/candle");
+                return;
+            }
 
-            if (response.IsSuccessStatusCode)
-            {
-                _log.LogInformation($"Successfully POST {records} to {url}");
-            }
-            else
-            {
-                _log.LogError($"Failed to POST to {url}");
-            }
+            _logger.LogWarning(
+                $"Successfully Posted {message.Payload.Count} Candle(s) {response.ReasonPhrase} from {_client.BaseAddress}/candle");
 
         }
 
@@ -55,27 +50,23 @@ namespace Archimedes.Service.Repository
             {
                 if (message.Payload == null)
                 {
-                    _log.LogError($"Price message is null");
+                    _logger.LogError($"Price payload is empty");
                     return;
                 }
 
-                var records = message.Payload.Count;
-                var url = $"{_config.ApiRepositoryUrl}/price";
                 var payload = new JsonContent(message.Payload);
+                var response = await _client.PostAsync("price", payload);
 
-                var response = await _client.PostAsync(url, payload);
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning($"Failed to Post {response.ReasonPhrase} from {_client.BaseAddress}/price");
+                    return;
+                }
 
-                if (response.IsSuccessStatusCode)
-                {
-                    _log.LogInformation($"Successfully POST {records} to {url}");
-                }
-                else
-                {
-                    _log.LogError($"Failed to POST to {url}");
-                }
+                _logger.LogWarning(
+                    $"Successfully Posted {message.Payload.Count} Price(s) {response.ReasonPhrase} from {_client.BaseAddress}/price");
 
             }
-
         }
     }
 }
