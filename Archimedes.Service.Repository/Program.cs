@@ -18,7 +18,7 @@ namespace Archimedes.Service.Repository
             }
             catch (Exception e)
             {
-                logger.Error(e, "Stopped program because of exception");
+                logger.Error( $"Stopped program because of exception: {e.Message} {e.StackTrace}");
             }
             finally
             {
