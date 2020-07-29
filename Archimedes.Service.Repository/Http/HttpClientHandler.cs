@@ -36,12 +36,12 @@ namespace Archimedes.Service.Repository
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning($"Failed to Post {response.ReasonPhrase} from {_client.BaseAddress}/candle");
+                _logger.LogError($"Failed to Post {response.ReasonPhrase} from {_client.BaseAddress}candle");
                 return;
             }
 
-            _logger.LogWarning(
-                $"Successfully Posted {message.Payload.Count} Candle(s) {response.ReasonPhrase} from {_client.BaseAddress}/candle");
+            _logger.LogInformation(
+                $"Successfully Posted {message.Payload.Count} Candle(s) {response.ReasonPhrase} from {_client.BaseAddress}candle");
 
         }
 
@@ -59,12 +59,12 @@ namespace Archimedes.Service.Repository
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogWarning($"Failed to Post {response.ReasonPhrase} from {_client.BaseAddress}/price");
+                    _logger.LogError($"Failed to Post {response.ReasonPhrase} from {_client.BaseAddress}price");
                     return;
                 }
 
-                _logger.LogWarning(
-                    $"Successfully Posted {message.Payload.Count} Price(s) {response.ReasonPhrase} from {_client.BaseAddress}/price");
+                _logger.LogInformation(
+                    $"Successfully Posted {message.Payload.Count} Price(s) {response.ReasonPhrase} from {_client.BaseAddress}price");
 
             }
         }
