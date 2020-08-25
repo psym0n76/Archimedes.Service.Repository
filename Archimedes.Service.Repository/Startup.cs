@@ -31,6 +31,9 @@ namespace Archimedes.Service.Repository
 
             services.AddLogging();
 
+            services.AddTransient<ICandleSubscriber, CandleSubscriber>();
+            services.AddTransient<IPriceSubscriber, PriceSubscriber>();
+
             services.AddTransient<ICandleConsumer>(x => new CandleConsumer(config.RabbitHost, config.RabbitPort, config.RabbitExchange,"CandleResponseQueue"));
             services.AddTransient<IPriceConsumer>(x => new PriceConsumer(config.RabbitHost, config.RabbitPort, config.RabbitExchange,"PriceResponseQueue"));
 

@@ -23,11 +23,11 @@ namespace Archimedes.Service.Repository
             {
                 try
                 {
-                    _candleSubscriber.Consume();
+                    _candleSubscriber.Consume(stoppingToken);
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError($"Unknown error found in CandleBackgroundService {e.Message} {e.StackTrace}");
+                    _logger.LogError($"Unknown error found in CandleBackgroundService: {e.Message} {e.StackTrace}");
                 }
             }, stoppingToken);
 

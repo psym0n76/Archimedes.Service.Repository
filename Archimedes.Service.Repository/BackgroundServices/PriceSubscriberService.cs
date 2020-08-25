@@ -23,7 +23,7 @@ namespace Archimedes.Service.Repository
             {
                 try
                 {
-                    _priceSubscriber.Consume();
+                    _priceSubscriber.Consume(stoppingToken);
                 }
                 catch (Exception e)
                 {

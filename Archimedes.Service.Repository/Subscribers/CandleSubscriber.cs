@@ -1,4 +1,5 @@
-﻿using Archimedes.Library.Domain;
+﻿using System.Threading;
+using Archimedes.Library.Domain;
 using Archimedes.Library.RabbitMq;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -20,10 +21,10 @@ namespace Archimedes.Service.Repository
             _consumer = consumer;
         }
 
-        public void Consume()
+        public void Consume(CancellationToken cancellationToken)
         {
             _consumer.HandleMessage += Consumer_HandleMessage;
-            _consumer.Subscribe();
+            _consumer.Subscribe(cancellationToken);
         }
 
         private void Consumer_HandleMessage(object sender, MessageHandlerEventArgs e)

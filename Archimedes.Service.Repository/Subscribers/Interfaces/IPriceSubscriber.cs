@@ -1,7 +1,9 @@
-﻿namespace Archimedes.Service.Repository
+﻿using System.Threading;
+
+namespace Archimedes.Service.Repository
 {
     public interface IPriceSubscriber
     {
-        void Consume();
+        void Consume(CancellationToken cancellationToken);
     }
 }
