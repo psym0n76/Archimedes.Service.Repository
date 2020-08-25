@@ -8,14 +8,14 @@ namespace Archimedes.Service.Repository
         {
             switch (message)
             {
-                case ResponsePrice c:
+                case PriceMessage c:
                 {
-                    return new PriceMessage();
+                    return new PriceMessageProcessor();
                 }
 
-                case ResponseCandle c:
+                case CandleMessage c:
                 {
-                    return new CandleMessage();
+                    return new CandleMessageProcessor();
                 }
 
                 default:

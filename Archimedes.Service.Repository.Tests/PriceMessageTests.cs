@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Archimedes.Library.Domain;
 using Archimedes.Library.Message;
 using Archimedes.Library.Message.Dto;
@@ -19,11 +18,11 @@ namespace Archimedes.Service.Repository.Tests
             var mockLogger = new Mock<ILogger>();
 
             var config = new Config();
-            var subject = new PriceMessage();
-            var priceResponse = new ResponsePrice()
+            var subject = new PriceMessageProcessor();
+            var priceResponse = new PriceMessage()
             {
-                Status = "TestStatus", Text = "TestText",
-                Payload = new List<PriceDto>() {new PriceDto() {Market = "TestGBPUSD"}}
+                Text = "TestTest",
+                Prices = new List<PriceDto>(){new PriceDto(){Market = "GBP/USD"}}
             };
 
             mockHttpClientRequest.Setup(m => m.Post(priceResponse));
@@ -45,12 +44,12 @@ namespace Archimedes.Service.Repository.Tests
             var mockHttpClientRequest = new Mock<IClient>();
             var mockLogger = new Mock<ILogger>();
             var config = new Config();
-            var subject = new PriceMessage();
+            var subject = new PriceMessageProcessor();
 
-            var priceResponse = new ResponsePrice()
+            var priceResponse = new PriceMessage()
             {
-                Status = "TestStatus", Text = "TestText",
-                Payload = new List<PriceDto>() {new PriceDto() {Market = "TestGBPUSD"}}
+                Text = "TestText",
+                Prices = new List<PriceDto>(){new PriceDto(){Market = "GBP/USD"}}
             };
 
             mockHttpClientRequest.Setup(m => m.Post(priceResponse));

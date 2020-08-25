@@ -23,15 +23,15 @@ namespace Archimedes.Service.Repository
             _logger = logger;
         }
 
-        public async Task Post(ResponseCandle message)
+        public async Task Post(CandleMessage message)
         {
-            if (message.Payload == null)
+            if (message.Candles == null)
             {
                 _logger.LogError($"Candle payload is empty");
                 return;
             }
 
-            var payload = new JsonContent(message.Payload);
+            var payload = new JsonContent(message.Candles);
             var response = await _client.PostAsync("candle", payload);
 
             if (!response.IsSuccessStatusCode)
@@ -41,20 +41,20 @@ namespace Archimedes.Service.Repository
             }
 
             _logger.LogInformation(
-                $"Successfully Posted {message.Payload.Count} Candle(s) {response.ReasonPhrase} from {_client.BaseAddress}candle");
+                $"Successfully Posted {message.Candles.Count} Candle(s) {response.ReasonPhrase} from {_client.BaseAddress}candle");
 
         }
 
-        public async Task Post(ResponsePrice message)
+        public async Task Post(PriceMessage message)
         {
             {
-                if (message.Payload == null)
+                if (message.Prices == null)
                 {
                     _logger.LogError($"Price payload is empty");
                     return;
                 }
 
-                var payload = new JsonContent(message.Payload);
+                var payload = new JsonContent(message.Prices);
                 var response = await _client.PostAsync("price", payload);
 
                 if (!response.IsSuccessStatusCode)
@@ -64,7 +64,7 @@ namespace Archimedes.Service.Repository
                 }
 
                 _logger.LogInformation(
-                    $"Successfully Posted {message.Payload.Count} Price(s) {response.ReasonPhrase} from {_client.BaseAddress}price");
+                    $"Successfully Posted {message.Prices.Count} Price(s) {response.ReasonPhrase} from {_client.BaseAddress}price");
 
             }
         }

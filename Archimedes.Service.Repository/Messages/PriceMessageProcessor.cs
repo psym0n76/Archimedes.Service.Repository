@@ -5,26 +5,25 @@ using Microsoft.Extensions.Logging;
 
 namespace Archimedes.Service.Repository
 {
-    public class CandleMessage : IMessage
+    public class PriceMessageProcessor : IMessage
     {
         public void Process<T>(T message, IClient httpClient, ILogger log, Config config)
         {
-            var candle = message as ResponseCandle;
+            var price = message as PriceMessage;
 
             try
             {
-                httpClient.Post(candle);
+                httpClient.Post(price);
             }
             catch (Exception e)
             {
                 log.LogError(
-                    $"Error posting Candle payload to {config.DatabaseServerConnection} - {e.Message}");
-                throw;
+                    $"Error posting Price payload: {price} {config.DatabaseServerConnection} - {e.Message} {e.StackTrace}");
             }
 
-            if (candle != null)
+            if (price != null)
                 log.LogInformation(
-                    $"Received message: {candle.Status} and {candle.Text} and {candle.Payload}");
+                    $"Received message: {price}");
         }
     }
 }

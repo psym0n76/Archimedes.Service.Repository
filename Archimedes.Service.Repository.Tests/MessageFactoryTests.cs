@@ -9,11 +9,11 @@ namespace Archimedes.Service.Repository.Tests
         [Test]
         public void Should_ReturnPriceMessage_WhenInputPriceResponseReceived()
         {
-            var message = new ResponsePrice();
+            var message = new PriceMessage();
             var subject = MessageHandlerFactory.Get(message);
 
             Assert.IsNotNull(subject);
-            Assert.IsInstanceOf<PriceMessage>(subject);
+            Assert.IsInstanceOf<PriceMessageProcessor>(subject);
         }
 
         [Test]

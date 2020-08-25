@@ -1,8 +1,6 @@
-﻿using System.Reflection;
-using System.Threading;
+﻿using System.Threading;
 using Archimedes.Library.Domain;
-using EasyNetQ;
-using EasyNetQ.AutoSubscribe;
+using Archimedes.Library.RabbitMq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +22,6 @@ namespace Archimedes.Service.Repository
 
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddSingleton(Configuration);
             services.Configure<Config>(Configuration.GetSection("AppSettings"));
 
@@ -34,19 +31,14 @@ namespace Archimedes.Service.Repository
 
             services.AddLogging();
 
-            //services.AddHostedService<TestService>();u go ahead
-            services.AddScoped<PriceSubscriber>();
+            services.AddTransient<ICandleConsumer>(x => new CandleConsumer(config.RabbitHost, config.RabbitPort, config.RabbitExchange,"CandleResponseQueue"));
+            services.AddTransient<IPriceConsumer>(x => new PriceConsumer(config.RabbitHost, config.RabbitPort, config.RabbitExchange,"PriceResponseQueue"));
+
+            services.AddHostedService<CandleSubscriberService>();
+            services.AddHostedService<PriceSubscriberService>();
+
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-
-
-
-            services.AddSingleton(RabbitHutch.CreateBus(config.RabbitHutchConnection));
-            services.AddSingleton<MessageDispatcher>();
-            services.AddSingleton(provider => new AutoSubscriber(provider.GetRequiredService<IBus>(), "subs:")
-            {
-                AutoSubscriberMessageDispatcher = provider.GetRequiredService<MessageDispatcher>()
-            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env,ILogger<Startup> logger)
@@ -62,9 +54,6 @@ namespace Archimedes.Service.Repository
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.ApplicationServices.GetRequiredService<AutoSubscriber>().GenerateSubscriptionId = c => $"{c.ConcreteType.Name}";
-            app.ApplicationServices.GetRequiredService<AutoSubscriber>().Subscribe(Assembly.GetExecutingAssembly());
 
             app.UseHttpsRedirection();
             app.UseRouting();

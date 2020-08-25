@@ -5,14 +5,14 @@ using Microsoft.Extensions.Options;
 
 namespace Archimedes.Service.Repository
 {
-    public class PriceSubscriber : IPriceSubscriber
+    public class CandleSubscriber : ICandleSubscriber
     {
-        private readonly ILogger<PriceSubscriber> _log;
+        private readonly ILogger<CandleSubscriber> _log;
         private readonly Config _config;
         private readonly IClient _httpClient;
-        private readonly IPriceConsumer _consumer;
+        private readonly ICandleConsumer _consumer;
 
-        public PriceSubscriber(ILogger<PriceSubscriber> log, IOptions<Config> config, IClient client, IPriceConsumer consumer)
+        public CandleSubscriber(ILogger<CandleSubscriber> log, IOptions<Config> config, IClient client, ICandleConsumer consumer)
         {
             _config = config.Value;
             _log = log;
@@ -28,7 +28,7 @@ namespace Archimedes.Service.Repository
 
         private void Consumer_HandleMessage(object sender, MessageHandlerEventArgs e)
         {
-            _log.LogInformation($"Received from PriceResponseQueue Message: {e.Message}");
+            _log.LogInformation($"Received from CandleResponseQueue Message: {e.Message}");
             var handler = MessageHandlerFactory.Get(e.Message);
             handler.Process(e.Message, _httpClient, _log, _config);
         }

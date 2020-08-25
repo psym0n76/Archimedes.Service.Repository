@@ -51,13 +51,13 @@ namespace Archimedes.Service.Repository.Tests
             return new HttpClientHandler(mockConfig.Object, client, mockLogger.Object);
         }
 
-        private static ResponsePrice MockPriceResponse()
+        private static PriceMessage MockPriceResponse()
         {
-            var priceResponse = new ResponsePrice()
+            var priceResponse = new PriceMessage()
             {
-                Status = "TestStatus",
+
                 Text = "TestText",
-                Payload = new List<PriceDto>() { new PriceDto() { Market = "TestGBPUSD" } }
+                Prices = new List<PriceDto>() { new PriceDto() { Market = "TestGBPUSD" } }
             };
 
             return priceResponse;
