@@ -1,8 +1,10 @@
 ﻿using System.Threading;
 using Archimedes.Library.Domain;
+using Archimedes.Library.Message;
 using Archimedes.Library.RabbitMq;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Archimedes.Service.Repository
 {
@@ -30,7 +32,8 @@ namespace Archimedes.Service.Repository
         private void Consumer_HandleMessage(object sender, MessageHandlerEventArgs e)
         {
             _log.LogInformation($"Received from PriceResponseQueue Message: {e.Message}");
-            var handler = MessageHandlerFactory.Get(e.Message);
+            var message = JsonConvert.DeserializeObject<PriceMessage>(e.Message);
+            var handler = MessageHandlerFactory.Get(message);
             handler.Process(e.Message, _httpClient, _log, _config);
         }
     }
