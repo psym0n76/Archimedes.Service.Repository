@@ -46,10 +46,6 @@ namespace Archimedes.Service.Repository
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env,ILogger<Startup> logger)
         {
-            logger.LogInformation("Started configuration: Waiting 10 Secs for Rabbit");
-            Thread.Sleep(10000);
-            logger.LogInformation("Started configuration: Finished waiting for Rabbit");
-
             //explains how to setup the app pool to autostart the application
             //https://www.taithienbo.com/how-to-auto-start-and-keep-an-asp-net-core-web-application-and-keep-it-running-on-iis/
 
