@@ -21,11 +21,11 @@ namespace Archimedes.Service.Repository
             _log = log;
             _httpClient = client;
             _consumer = consumer;
+            _consumer.HandleMessage += Consumer_HandleMessage;
         }
 
         public void Consume(CancellationToken cancellationToken)
         {
-            _consumer.HandleMessage += Consumer_HandleMessage;
             _consumer.Subscribe();
         }
 
