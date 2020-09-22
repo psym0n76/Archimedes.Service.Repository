@@ -16,7 +16,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "ancmHostingModel": "InProcess"
+      "HostingModel": "InProcess"
     },
     "Archimedes.Fx.Service.Repository": {
       "commandName": "Project",
