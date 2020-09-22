@@ -3,14 +3,13 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Archimedes.Library.Domain;
 using Archimedes.Library.Message;
-using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Archimedes.Service.Repository
 {
     public class MessageClient : IMessageClient
-    {AfterControllerActionMethodEventData
+    {
         private readonly ILogger<MessageClient> _logger;
         private readonly HttpClient _client;
 
