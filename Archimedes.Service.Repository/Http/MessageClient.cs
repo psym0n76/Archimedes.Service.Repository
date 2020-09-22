@@ -3,19 +3,21 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Archimedes.Library.Domain;
 using Archimedes.Library.Message;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Archimedes.Service.Repository
 {
-    public class HttpClientHandler : IClient
-    {
-        private readonly ILogger<HttpClientHandler> _logger;
+    public class MessageClient : IMessageClient
+    {AfterControllerActionMethodEventData
+        private readonly ILogger<MessageClient> _logger;
         private readonly HttpClient _client;
 
         //https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?view=aspnetcore-3.1
 
-        public HttpClientHandler(IOptions<Config> config, HttpClient httpClient, ILogger<HttpClientHandler> logger)
+        public MessageClient(IOptions<Config> config, HttpClient httpClient,
+            ILogger<MessageClient> logger)
         {
             httpClient.BaseAddress = new Uri($"{config.Value.ApiRepositoryUrl}");
             httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -31,22 +33,29 @@ namespace Archimedes.Service.Repository
                 return;
             }
 
-            var payload = new JsonContent(message.Candles);
-            var response = await _client.PostAsync("candle", payload);
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                _logger.LogError($"Failed to Post {response.ReasonPhrase} from {_client.BaseAddress}candle");
-                return;
+                var payload = new JsonContent(message.Candles);
+                var response = await _client.PostAsync("candle", payload);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError($"Failed to Post {response.ReasonPhrase} from {_client.BaseAddress}candle");
+                    return;
+                }
+
+                _logger.LogInformation(
+                    $"Successfully Posted {message.Candles.Count} Candle(s) {response.ReasonPhrase} from {_client.BaseAddress}candle");
             }
-
-            _logger.LogInformation(
-                $"Successfully Posted {message.Candles.Count} Candle(s) {response.ReasonPhrase} from {_client.BaseAddress}candle");
-
+            catch (Exception e)
+            {
+                _logger.LogError($"Error {e.Message} {e.StackTrace}");
+            }
         }
 
         public async Task Post(PriceMessage message)
         {
+            try
             {
                 if (message.Prices == null)
                 {
@@ -65,7 +74,10 @@ namespace Archimedes.Service.Repository
 
                 _logger.LogInformation(
                     $"Successfully Posted {message.Prices.Count} Price(s) {response.ReasonPhrase} from {_client.BaseAddress}price");
-
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Error {e.Message} {e.StackTrace}");
             }
         }
     }

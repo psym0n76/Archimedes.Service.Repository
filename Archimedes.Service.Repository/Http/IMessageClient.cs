@@ -3,9 +3,9 @@ using Archimedes.Library.Message;
 
 namespace Archimedes.Service.Repository
 {
-    public interface IClient
+    public interface IMessageClient
     {
-        Task Post(PriceMessage message);
         Task Post(CandleMessage message);
+        Task Post(PriceMessage message);
     }
 }

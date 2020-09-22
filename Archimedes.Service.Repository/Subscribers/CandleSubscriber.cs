@@ -1,9 +1,8 @@
-﻿using System.Threading;
-using Archimedes.Library.Domain;
+﻿using System;
+using System.Threading;
 using Archimedes.Library.Message;
 using Archimedes.Library.RabbitMq;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace Archimedes.Service.Repository
@@ -11,33 +10,46 @@ namespace Archimedes.Service.Repository
     public class CandleSubscriber : ICandleSubscriber
     {
         private readonly ILogger<CandleSubscriber> _logger;
-        private readonly Config _config;
-        private readonly IClient _httpClient;
         private readonly ICandleConsumer _consumer;
+        private readonly IMessageClient _messageClient;
 
-        public CandleSubscriber(ILogger<CandleSubscriber> logger, IOptions<Config> config, IClient client, ICandleConsumer consumer)
+        public CandleSubscriber(ILogger<CandleSubscriber> logger, ICandleConsumer consumer, IMessageClient messageClient)
         {
-            _config = config.Value;
             _logger = logger;
-            _httpClient = client;
             _consumer = consumer;
+            _messageClient = messageClient;
             _consumer.HandleMessage += Consumer_HandleMessage;
         }
-
 
         public void Consume(CancellationToken cancellationToken)
         {
             _consumer.Subscribe(cancellationToken);
         }
 
-        private void Consumer_HandleMessage(object sender, MessageHandlerEventArgs e)
+        private void Consumer_HandleMessage(object sender, MessageHandlerEventArgs args)
         {
-            _logger.LogInformation($"Received from CandleResponseQueue Message: {e.Message}");
-            var message = JsonConvert.DeserializeObject<CandleMessage>(e.Message);
-            var handler = MessageHandlerFactory.Get(message);
+            PostCandleMessageToRepository(args);
+        }
 
-            // not passing the correct message though !!!
-            handler.Process(e.Message, _httpClient, _logger, _config);
+        private void PostCandleMessageToRepository(MessageHandlerEventArgs args)
+        {
+            _logger.LogInformation($"Received from CandleResponseQueue Message: {args.Message}");
+
+            try
+            {
+                var message = JsonConvert.DeserializeObject<CandleMessage>(args.Message);
+                _messageClient.Post(message);
+            }
+
+            catch (JsonException j)
+            {
+                _logger.LogError($"Unable to Parse Candle message {args.Message}{j.Message} {j.StackTrace}");
+            }
+
+            catch (Exception e)
+            {
+                _logger.LogError($"Unable to Post Candle message to API {e.Message} {e.StackTrace}");
+            }
         }
     }
 }

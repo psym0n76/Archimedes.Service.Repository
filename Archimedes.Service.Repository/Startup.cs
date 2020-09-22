@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Archimedes.Library.Domain;
+﻿using Archimedes.Library.Domain;
 using Archimedes.Library.RabbitMq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace Archimedes.Service.Repository
 {
@@ -27,7 +25,7 @@ namespace Archimedes.Service.Repository
 
             var config = Configuration.GetSection("AppSettings").Get<Config>();
 
-            services.AddHttpClient<IClient, HttpClientHandler>();
+            services.AddHttpClient<IMessageClient, MessageClient>();
 
             services.AddLogging();
 
@@ -40,11 +38,10 @@ namespace Archimedes.Service.Repository
             services.AddHostedService<CandleSubscriberService>();
             services.AddHostedService<PriceSubscriberService>();
 
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             //explains how to setup the app pool to autostart the application
             //https://www.taithienbo.com/how-to-auto-start-and-keep-an-asp-net-core-web-application-and-keep-it-running-on-iis/

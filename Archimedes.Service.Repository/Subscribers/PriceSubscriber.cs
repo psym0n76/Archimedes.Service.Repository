@@ -1,26 +1,23 @@
-﻿using System.Threading;
-using Archimedes.Library.Domain;
+﻿using System;
+using System.Threading;
 using Archimedes.Library.Message;
 using Archimedes.Library.RabbitMq;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace Archimedes.Service.Repository
 {
     public class PriceSubscriber : IPriceSubscriber
     {
-        private readonly ILogger<PriceSubscriber> _log;
-        private readonly Config _config;
-        private readonly IClient _httpClient;
+        private readonly ILogger<PriceSubscriber> _logger;
         private readonly IPriceConsumer _consumer;
+        private readonly IMessageClient _messageClient;
 
-        public PriceSubscriber(ILogger<PriceSubscriber> log, IOptions<Config> config, IClient client, IPriceConsumer consumer)
+        public PriceSubscriber(ILogger<PriceSubscriber> log, IPriceConsumer consumer, IMessageClient messageClient)
         {
-            _config = config.Value;
-            _log = log;
-            _httpClient = client;
+            _logger = log;
             _consumer = consumer;
+            _messageClient = messageClient;
             _consumer.HandleMessage += Consumer_HandleMessage;
         }
 
@@ -29,12 +26,30 @@ namespace Archimedes.Service.Repository
             _consumer.Subscribe();
         }
 
-        private void Consumer_HandleMessage(object sender, MessageHandlerEventArgs e)
+        private void Consumer_HandleMessage(object sender, MessageHandlerEventArgs args)
         {
-            _log.LogInformation($"Received from PriceResponseQueue Message: {e.Message}");
-            var message = JsonConvert.DeserializeObject<PriceMessage>(e.Message);
-            var handler = MessageHandlerFactory.Get(message);
-            handler.Process(e.Message, _httpClient, _log, _config);
+            PostPriceMessageToRepository(args);
+        }
+
+        private void PostPriceMessageToRepository(MessageHandlerEventArgs args)
+        {
+            _logger.LogInformation($"Received from CandleResponseQueue Message: {args.Message}");
+
+            try
+            {
+                var message = JsonConvert.DeserializeObject<CandleMessage>(args.Message);
+                _messageClient.Post(message);
+            }
+
+            catch (JsonException j)
+            {
+                _logger.LogError($"Unable to Parse Price message {args.Message}{j.Message} {j.StackTrace}");
+            }
+
+            catch (Exception e)
+            {
+                _logger.LogError($"Unable to Post Price message to API {e.Message} {e.StackTrace}");
+            }
         }
     }
 }

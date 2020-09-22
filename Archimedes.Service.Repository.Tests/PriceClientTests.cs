@@ -26,10 +26,10 @@ namespace Archimedes.Service.Repository.Tests
             Assert.DoesNotThrow(() => subject.Post(MockPriceResponse()));
         }
 
-        private static IClient GetSubjectUnderTest(HttpStatusCode statusCode)
+        private static IMessageClient GetSubjectUnderTest(HttpStatusCode statusCode)
         {
             var mockFactory = new Mock<IHttpClientFactory>();
-            var mockLogger = new Mock<ILogger<HttpClientHandler>>();
+            var mockLogger = new Mock<ILogger<MessageClient>>();
             var mockHttpMessageHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
             var mockConfig = new Mock<IOptions<Config>>();
             var mockConfigItem = new Config() {ApiRepositoryUrl = "https://www.something"};
@@ -45,10 +45,10 @@ namespace Archimedes.Service.Repository.Tests
 
             mockConfig.Setup(a => a.Value).Returns(mockConfigItem);
 
-            var client = new HttpClient(mockHttpMessageHandler.Object);
+            var client = new System.Net.Http.HttpClient(mockHttpMessageHandler.Object);
             mockFactory.Setup(a => a.CreateClient(It.IsAny<string>())).Returns(client);
 
-            return new HttpClientHandler(mockConfig.Object, client, mockLogger.Object);
+            return new MessageClient(mockConfig.Object, client, mockLogger.Object);
         }
 
         private static PriceMessage MockPriceResponse()
