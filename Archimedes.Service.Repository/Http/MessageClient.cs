@@ -100,13 +100,6 @@ namespace Archimedes.Service.Repository
             {
                 var payload = new JsonContent(message.Candles);
                 var response = await _client.PostAsync("candle", payload);
-                //update market table
-                var candleMetrics =
-                    await _client.GetAsync(
-                        $"candle/candle_metrics?market={message.Market}&granularity={message.TimeFrame}");
-
-
-            ;
 
                 if (!response.IsSuccessStatusCode)
                 {
