@@ -28,27 +28,40 @@ namespace Archimedes.Service.Repository
 
         private void Consumer_HandleMessage(object sender, MessageHandlerEventArgs args)
         {
-            PostCandleMessageToRepository(args);
-        }
-
-        private void PostCandleMessageToRepository(MessageHandlerEventArgs args)
-        {
             _logger.LogInformation($"Received from CandleResponseQueue Message: {args.Message}");
 
+            var message = JsonConvert.DeserializeObject<CandleMessage>(args.Message);
+            AddCandleMessageToRepository(message);
+            UpdateMarketMetrics(message);
+        }
+
+        private void UpdateMarketMetrics(CandleMessage message)
+        {
             try
             {
-                var message = JsonConvert.DeserializeObject<CandleMessage>(args.Message);
+                _messageClient.UpdateMarketMetrics(message);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Unable to Update Market Metrics message {e.Message} {e.StackTrace}");
+            }
+        }
+
+        private void AddCandleMessageToRepository(CandleMessage message)
+        {
+            try
+            {
                 _messageClient.Post(message);
             }
 
             catch (JsonException j)
             {
-                _logger.LogError($"Unable to Parse Candle message {args.Message}{j.Message} {j.StackTrace}");
+                _logger.LogError($"Unable to Parse Candle message {j.Message} {j.StackTrace}");
             }
 
             catch (Exception e)
             {
-                _logger.LogError($"Unable to Post Candle message to API {e.Message} {e.StackTrace}");
+                _logger.LogError($"Unable to Add Candle message to API {e.Message} {e.StackTrace}");
             }
         }
     }

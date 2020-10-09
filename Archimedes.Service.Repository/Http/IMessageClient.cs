@@ -7,5 +7,6 @@ namespace Archimedes.Service.Repository
     {
         Task Post(CandleMessage message);
         Task Post(PriceMessage message);
+        Task UpdateMarketMetrics(CandleMessage message);
     }
 }
