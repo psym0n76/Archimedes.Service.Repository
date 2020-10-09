@@ -47,7 +47,7 @@ namespace Archimedes.Service.Repository
             {
                 var response =
                     await _client.GetAsync(
-                        $"candle/candle_metrics?market={message.Market}&granularity={message.TimeFrame}");
+                        $"candle/candle_metrics?market={message.Market}&granularity={message.Interval}{message.TimeFrame}");
 
                 if (!response.IsSuccessStatusCode)
                 {
