@@ -30,18 +30,18 @@ namespace Archimedes.Service.Repository
         {
             var metrics = await GetCandleMetrics(message);
 
-            var market = new MarketDto()
+            var candleMetric = new CandleMetricDto()
             {
-                Id = message.MarketId,
+                MarketId = message.MarketId,
                 MaxDate = metrics.MaxDate,
                 MinDate = metrics.MinDate,
                 Quantity = metrics.Quantity
             };
 
-            await UpdateMarket(market);
+            await UpdateMarket(candleMetric);
         }
 
-        public async Task<MarketDto> GetCandleMetrics(CandleMessage message)
+        public async Task<CandleMetricDto> GetCandleMetrics(CandleMessage message)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace Archimedes.Service.Repository
                     return default;
                 }
 
-                var market = await response.Content.ReadAsAsync<MarketDto>();
+                var market = await response.Content.ReadAsAsync<CandleMetricDto>();
 
                 return market;
             }
@@ -66,14 +66,14 @@ namespace Archimedes.Service.Repository
             }
         }
 
-        public async Task UpdateMarket(MarketDto market)
+        public async Task UpdateMarket(CandleMetricDto metric)
         {
             try
             {
-                var payload = new JsonContent(market);
+                var payload = new JsonContent(metric);
 
                 var response =
-                    await _client.PutAsync("market/market_metrics",payload);
+                    await _client.PutAsync("market/market_metrics", payload);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -86,7 +86,6 @@ namespace Archimedes.Service.Repository
                 _logger.LogError($"Error {e.Message} {e.StackTrace}");
             }
         }
-
 
         public async Task Post(CandleMessage message)
         {
