@@ -31,15 +31,15 @@ namespace Archimedes.Service.Repository
             _logger.LogInformation($"Received from CandleResponseQueue Message: {args.Message}");
 
             var message = JsonConvert.DeserializeObject<CandleMessage>(args.Message);
-            AddCandleMessageToRepository(message);
+            AddCandleToRepository(message);
             UpdateMarketMetrics(message);
         }
 
-        private void UpdateMarketMetrics(CandleMessage message)
+        private async void UpdateMarketMetrics(CandleMessage message)
         {
             try
             {
-                _messageClient.UpdateMarketMetrics(message);
+                await _messageClient.UpdateMarketMetrics(message);
             }
             catch (Exception e)
             {
@@ -47,11 +47,11 @@ namespace Archimedes.Service.Repository
             }
         }
 
-        private void AddCandleMessageToRepository(CandleMessage message)
+        private async void AddCandleToRepository(CandleMessage message)
         {
             try
             {
-                _messageClient.Post(message);
+               await _messageClient.Post(message);
             }
 
             catch (JsonException j)
