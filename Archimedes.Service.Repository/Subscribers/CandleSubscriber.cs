@@ -47,11 +47,11 @@ namespace Archimedes.Service.Repository
             }
         }
 
-        private async void AddCandleToRepository(CandleMessage message)
+        private  void AddCandleToRepository(CandleMessage message)
         {
             try
-            {
-               await _messageClient.Post(message);
+            { 
+                _messageClient.Post(message);
             }
 
             catch (JsonException j)

@@ -89,7 +89,7 @@ namespace Archimedes.Service.Repository
             }
         }
 
-        public async Task Post(CandleMessage message)
+        public void Post(CandleMessage message)
         {
             if (message.Candles == null)
             {
@@ -100,7 +100,7 @@ namespace Archimedes.Service.Repository
             try
             {
                 var payload = new JsonContent(message.Candles);
-                var response = await _client.PostAsync("candle", payload);
+                var response =  _client.PostAsync("candle", payload).Result; //switched to synchronous as i need wait to get max candle
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -109,7 +109,7 @@ namespace Archimedes.Service.Repository
                 }
 
                 _logger.LogInformation(
-                    $"Successfully Posted {message.Candles.Count} Candle(s) {response.ReasonPhrase} from {_client.BaseAddress}candle");
+                    $"\n\n Added {message.Candles.Count} Candle(s) on {message.Market} {message.Interval}{message.TimeFrame}");
             }
             catch (Exception e)
             {
