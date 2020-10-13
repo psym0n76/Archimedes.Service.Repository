@@ -28,9 +28,9 @@ namespace Archimedes.Service.Repository
 
         private void Consumer_HandleMessage(object sender, MessageHandlerEventArgs args)
         {
-            _logger.LogInformation($"Received from CandleResponseQueue Message: {args.Message}");
-
             var message = JsonConvert.DeserializeObject<CandleMessage>(args.Message);
+
+            _logger.LogInformation($"Received from CandleResponseQueue:: {message}");
             AddCandleToRepository(message);
             UpdateMarketMetrics(message);
         }
