@@ -109,7 +109,7 @@ namespace Archimedes.Service.Repository
                 }
 
                 _logger.LogInformation(
-                    $"\n\n Added {message.Candles.Count} Candle(s) on {message.Market} {message.Interval}{message.TimeFrame}");
+                    $"\n\n ADDED {message.Candles.Count} Candle(s) on {message.Market} {message.Interval}{message.TimeFrame}\n");
             }
             catch (Exception e)
             {
