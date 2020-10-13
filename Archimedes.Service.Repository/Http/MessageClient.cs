@@ -51,11 +51,13 @@ namespace Archimedes.Service.Repository
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogError($"Failed to Post {response.ReasonPhrase} from {_client.BaseAddress}candle");
+                    _logger.LogError($"Failed to Get {response.ReasonPhrase} from {_client.BaseAddress}candle/candle_metrics?market={message.Market}&granularity={message.Interval}{message.TimeFrame}");
                     return default;
                 }
 
                 var market = await response.Content.ReadAsAsync<CandleMetricDto>();
+
+                _logger.LogInformation($"Received CandleMetrics: {market}");
 
                 return market;
             }
