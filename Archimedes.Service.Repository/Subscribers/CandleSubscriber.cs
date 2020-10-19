@@ -12,12 +12,14 @@ namespace Archimedes.Service.Repository
         private readonly ILogger<CandleSubscriber> _logger;
         private readonly ICandleConsumer _consumer;
         private readonly IMessageClient _messageClient;
+        private readonly IProducer<StrategyMessage> _producer;
 
-        public CandleSubscriber(ILogger<CandleSubscriber> logger, ICandleConsumer consumer, IMessageClient messageClient)
+        public CandleSubscriber(ILogger<CandleSubscriber> logger, ICandleConsumer consumer, IMessageClient messageClient, IProducer<StrategyMessage> producer)
         {
             _logger = logger;
             _consumer = consumer;
             _messageClient = messageClient;
+            _producer = producer;
             _consumer.HandleMessage += Consumer_HandleMessage;
         }
 
@@ -33,6 +35,29 @@ namespace Archimedes.Service.Repository
             _logger.LogInformation($"Received from CandleResponseQueue:: {message}");
             AddCandleToRepository(message);
             UpdateMarketMetrics(message);
+            ProduceStrategyMessage(message);
+        }
+
+        private void ProduceStrategyMessage(CandleMessage message)
+        {
+            try
+            {
+                var strategyMessage = new StrategyMessage()
+                {
+                    Interval = message.Interval,
+                    Market = message.Market,
+                    Granularity = message.TimeFrame,
+                    StartDate = DateTime.Now.AddDays(-3),
+                    EndDate = DateTime.Now
+                };
+
+                _producer.PublishMessage(strategyMessage,"StrategyRequestQueue");
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Unable to Add Strategy message to Rabbit{e.Message} {e.StackTrace}");
+            }
         }
 
         private async void UpdateMarketMetrics(CandleMessage message)

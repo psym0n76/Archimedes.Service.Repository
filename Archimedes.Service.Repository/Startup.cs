@@ -1,4 +1,5 @@
 ﻿using Archimedes.Library.Domain;
+using Archimedes.Library.Message;
 using Archimedes.Library.RabbitMq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,6 +33,7 @@ namespace Archimedes.Service.Repository
             services.AddTransient<ICandleSubscriber, CandleSubscriber>();
             services.AddTransient<IPriceSubscriber, PriceSubscriber>();
 
+            services.AddTransient<IProducer<StrategyMessage>, Producer<StrategyMessage>>();
             services.AddTransient<ICandleConsumer>(x => new CandleConsumer(config.RabbitHost, config.RabbitPort, config.RabbitExchange,"CandleResponseQueue"));
             services.AddTransient<IPriceConsumer>(x => new PriceConsumer(config.RabbitHost, config.RabbitPort, config.RabbitExchange,"PriceResponseQueue"));
 
