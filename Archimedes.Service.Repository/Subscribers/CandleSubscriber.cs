@@ -46,7 +46,7 @@ namespace Archimedes.Service.Repository
                 {
                     Interval = message.Interval,
                     Market = message.Market,
-                    Granularity = message.TimeFrame,
+                    Granularity = message.Interval + message.TimeFrame,
                     StartDate = DateTime.Now.AddDays(-3),
                     EndDate = DateTime.Now
                 };
