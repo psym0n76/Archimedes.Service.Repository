@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Threading;
 using Archimedes.Library.Message;
+using Archimedes.Library.Message.Dto;
 using Archimedes.Library.RabbitMq;
+using Archimedes.Service.Repository.Hubs;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -13,13 +16,15 @@ namespace Archimedes.Service.Repository
         private readonly ICandleConsumer _consumer;
         private readonly IMessageClient _messageClient;
         private readonly IProducer<StrategyMessage> _producer;
+        private readonly IHubContext<CandleMetricHub> _context;
 
-        public CandleSubscriber(ILogger<CandleSubscriber> logger, ICandleConsumer consumer, IMessageClient messageClient, IProducer<StrategyMessage> producer)
+        public CandleSubscriber(ILogger<CandleSubscriber> logger, ICandleConsumer consumer, IMessageClient messageClient, IProducer<StrategyMessage> producer, IHubContext<CandleMetricHub> context)
         {
             _logger = logger;
             _consumer = consumer;
             _messageClient = messageClient;
             _producer = producer;
+            _context = context;
             _consumer.HandleMessage += Consumer_HandleMessage;
         }
 
@@ -64,7 +69,19 @@ namespace Archimedes.Service.Repository
         {
             try
             {
-                await _messageClient.UpdateMarketMetrics(message);
+                var metrics = await _messageClient.GetCandleMetrics(message);
+
+                var candleMetric = new CandleMetricDto()
+                {
+                    MarketId = message.MarketId,
+                    MaxDate = metrics.MaxDate,
+                    MinDate = metrics.MinDate,
+                    Quantity = metrics.Quantity
+                };
+
+                await _messageClient.UpdateMarketMetrics(candleMetric);
+                await _context.Clients.All.SendAsync("Update", candleMetric);
+
             }
             catch (Exception e)
             {

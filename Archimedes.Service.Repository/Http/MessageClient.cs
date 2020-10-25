@@ -26,19 +26,17 @@ namespace Archimedes.Service.Repository
             _logger = logger;
         }
 
-        public async Task UpdateMarketMetrics(CandleMessage message)
+        public async Task UpdateMarketMetrics(CandleMetricDto message)
         {
-            var metrics = await GetCandleMetrics(message);
-
-            var candleMetric = new CandleMetricDto()
+            try
             {
-                MarketId = message.MarketId,
-                MaxDate = metrics.MaxDate,
-                MinDate = metrics.MinDate,
-                Quantity = metrics.Quantity
-            };
-
-            await UpdateMarket(candleMetric);
+                await UpdateMarket(message);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Error {e.Message} {e.StackTrace}");
+            }
+ 
         }
 
         public async Task<CandleMetricDto> GetCandleMetrics(CandleMessage message)

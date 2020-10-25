@@ -1,6 +1,7 @@
 ﻿using Archimedes.Library.Domain;
 using Archimedes.Library.Message;
 using Archimedes.Library.RabbitMq;
+using Archimedes.Service.Repository.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,7 @@ namespace Archimedes.Service.Repository
             services.AddHttpClient<IMessageClient, MessageClient>();
 
             services.AddLogging();
-
+            services.AddSignalR();
             services.AddTransient<ICandleSubscriber, CandleSubscriber>();
             services.AddTransient<IPriceSubscriber, PriceSubscriber>();
 
@@ -60,6 +61,7 @@ namespace Archimedes.Service.Repository
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<CandleMetricHub>("/Hubs/candle-metric");
             });
         }
     }

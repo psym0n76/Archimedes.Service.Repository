@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Archimedes.Library.Message;
+using Archimedes.Library.Message.Dto;
 
 namespace Archimedes.Service.Repository
 {
@@ -7,6 +8,8 @@ namespace Archimedes.Service.Repository
     {
          void Post(CandleMessage message);
         Task Post(PriceMessage message);
-        Task UpdateMarketMetrics(CandleMessage message);
+        Task UpdateMarketMetrics(CandleMetricDto message);
+
+        Task<CandleMetricDto> GetCandleMetrics(CandleMessage message);
     }
 }
