@@ -61,7 +61,7 @@ namespace Archimedes.Service.Repository
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<MarketMetricHub>("/hubs/market");
+                endpoints.MapHub<MarketHub>("/hubs/market");
             });
         }
     }

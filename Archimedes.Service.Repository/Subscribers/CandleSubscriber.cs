@@ -16,9 +16,9 @@ namespace Archimedes.Service.Repository
         private readonly ICandleConsumer _consumer;
         private readonly IMessageClient _messageClient;
         private readonly IProducer<StrategyMessage> _producer;
-        private readonly IHubContext<MarketMetricHub> _context;
+        private readonly IHubContext<MarketHub> _context;
 
-        public CandleSubscriber(ILogger<CandleSubscriber> logger, ICandleConsumer consumer, IMessageClient messageClient, IProducer<StrategyMessage> producer, IHubContext<MarketMetricHub> context)
+        public CandleSubscriber(ILogger<CandleSubscriber> logger, ICandleConsumer consumer, IMessageClient messageClient, IProducer<StrategyMessage> producer, IHubContext<MarketHub> context)
         {
             _logger = logger;
             _consumer = consumer;
@@ -74,6 +74,7 @@ namespace Archimedes.Service.Repository
                 var market = new MarketDto()
                 {
                     Id = message.MarketId,
+                    Name = message.Market,
                     Granularity = message.Interval + message.TimeFrame,
                     TimeFrame = message.TimeFrame,
                     LastUpdated = DateTime.Now,

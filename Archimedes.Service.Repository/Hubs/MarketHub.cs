@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Archimedes.Service.Repository.Hubs
 {
-    public class MarketMetricHub : Hub<IMarketMetricHub>
+    public class MarketHub : Hub<IMarketHub>
     {
         public async Task Add(MarketDto value)
         {
