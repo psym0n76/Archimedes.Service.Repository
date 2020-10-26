@@ -16,9 +16,9 @@ namespace Archimedes.Service.Repository
         private readonly ICandleConsumer _consumer;
         private readonly IMessageClient _messageClient;
         private readonly IProducer<StrategyMessage> _producer;
-        private readonly IHubContext<CandleMetricHub> _context;
+        private readonly IHubContext<MarketMetricHub> _context;
 
-        public CandleSubscriber(ILogger<CandleSubscriber> logger, ICandleConsumer consumer, IMessageClient messageClient, IProducer<StrategyMessage> producer, IHubContext<CandleMetricHub> context)
+        public CandleSubscriber(ILogger<CandleSubscriber> logger, ICandleConsumer consumer, IMessageClient messageClient, IProducer<StrategyMessage> producer, IHubContext<MarketMetricHub> context)
         {
             _logger = logger;
             _consumer = consumer;
@@ -71,16 +71,20 @@ namespace Archimedes.Service.Repository
             {
                 var metrics = await _messageClient.GetCandleMetrics(message);
 
-                var candleMetric = new CandleMetricDto()
+                var market = new MarketDto()
                 {
-                    MarketId = message.MarketId,
+                    Id = message.MarketId,
+                    Granularity = message.Interval + message.TimeFrame,
+                    TimeFrame = message.TimeFrame,
+                    LastUpdated = DateTime.Now,
+                    Interval = message.Interval,
                     MaxDate = metrics.MaxDate,
                     MinDate = metrics.MinDate,
                     Quantity = metrics.Quantity
                 };
 
-                await _messageClient.UpdateMarketMetrics(candleMetric);
-                await _context.Clients.All.SendAsync("Update", candleMetric);
+                await _messageClient.UpdateMarketMetrics(market);
+                await _context.Clients.All.SendAsync("Update", market);
 
             }
             catch (Exception e)

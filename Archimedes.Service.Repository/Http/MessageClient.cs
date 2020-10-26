@@ -26,7 +26,7 @@ namespace Archimedes.Service.Repository
             _logger = logger;
         }
 
-        public async Task UpdateMarketMetrics(CandleMetricDto message)
+        public async Task UpdateMarketMetrics(MarketDto message)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace Archimedes.Service.Repository
             }
         }
 
-        public async Task UpdateMarket(CandleMetricDto metric)
+        public async Task UpdateMarket(MarketDto metric)
         {
             try
             {
