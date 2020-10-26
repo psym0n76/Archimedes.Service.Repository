@@ -33,11 +33,11 @@ namespace Archimedes.Service.Repository
 
         private void PostPriceMessageToRepository(MessageHandlerEventArgs args)
         {
-            _logger.LogInformation($"Received from CandleResponseQueue Message: {args.Message}");
+            _logger.LogInformation($"Received from PriceResponseQueue Message: {args.Message}");
 
             try
             {
-                var message = JsonConvert.DeserializeObject<CandleMessage>(args.Message);
+                var message = JsonConvert.DeserializeObject<PriceMessage>(args.Message);
                 _messageClient.Post(message);
             }
 

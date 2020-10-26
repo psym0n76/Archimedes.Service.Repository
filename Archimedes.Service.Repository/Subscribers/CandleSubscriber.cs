@@ -37,7 +37,7 @@ namespace Archimedes.Service.Repository
         {
             var message = JsonConvert.DeserializeObject<CandleMessage>(args.Message);
 
-            _logger.LogInformation($"Received from CandleResponseQueue:: {message}");
+            _logger.LogInformation($"Received from CandleResponseQueue: {message}");
             AddCandleToRepository(message);
             UpdateMarketMetrics(message);
             ProduceStrategyMessage(message);
@@ -85,6 +85,8 @@ namespace Archimedes.Service.Repository
                 };
 
                 await _messageClient.UpdateMarketMetrics(market);
+
+                _logger.LogInformation("send update to hub");
                 await _context.Clients.All.SendAsync("Update", market);
 
             }
