@@ -61,7 +61,7 @@ namespace Archimedes.Service.Repository
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<CandleMetricHub>("/Hubs/candle-metric");
+                endpoints.MapHub<CandleMetricHub>("/hubs/candle-metric");
             });
         }
     }
