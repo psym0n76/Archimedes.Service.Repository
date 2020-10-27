@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using Archimedes.Library.Message;
 using Archimedes.Library.RabbitMq;
+using Archimedes.Service.Repository.Hubs;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -12,12 +15,14 @@ namespace Archimedes.Service.Repository
         private readonly ILogger<PriceSubscriber> _logger;
         private readonly IPriceConsumer _consumer;
         private readonly IMessageClient _messageClient;
+        private readonly IHubContext<PriceHub> _context;
 
-        public PriceSubscriber(ILogger<PriceSubscriber> log, IPriceConsumer consumer, IMessageClient messageClient)
+        public PriceSubscriber(ILogger<PriceSubscriber> log, IPriceConsumer consumer, IMessageClient messageClient, IHubContext<PriceHub> context)
         {
             _logger = log;
             _consumer = consumer;
             _messageClient = messageClient;
+            _context = context;
             _consumer.HandleMessage += Consumer_HandleMessage;
         }
 
@@ -33,12 +38,13 @@ namespace Archimedes.Service.Repository
 
         private void PostPriceMessageToRepository(MessageHandlerEventArgs args)
         {
-            _logger.LogInformation($"Received from PriceResponseQueue Message: {args.Message}");
+            //_logger.LogInformation($"Received from PriceResponseQueue Message: {args.Message}"); hidden as so many
 
             try
             {
                 var message = JsonConvert.DeserializeObject<PriceMessage>(args.Message);
                 _messageClient.Post(message);
+                _context.Clients.All.SendAsync("Update", message.Prices.First());
             }
 
             catch (JsonException j)

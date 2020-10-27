@@ -56,8 +56,6 @@ namespace Archimedes.Service.Repository.Tests
         {
             var priceResponse = new PriceMessage()
             {
-
-                Text = "TestText",
                 Prices = new List<PriceDto>() { new PriceDto() { Market = "TestGBPUSD" } }
             };
 

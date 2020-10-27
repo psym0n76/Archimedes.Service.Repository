@@ -39,7 +39,7 @@ namespace Archimedes.Service.Repository
  
         }
 
-        public async Task<CandleMetricDto> GetCandleMetrics(CandleMessage message)
+        public async Task<CandleMetricsDto> GetCandleMetrics(CandleMessage message)
         {
             try
             {
@@ -53,7 +53,7 @@ namespace Archimedes.Service.Repository
                     return default;
                 }
 
-                var market = await response.Content.ReadAsAsync<CandleMetricDto>();
+                var market = await response.Content.ReadAsAsync<CandleMetricsDto>();
 
                 _logger.LogInformation($"Received CandleMetrics: {market}");
 

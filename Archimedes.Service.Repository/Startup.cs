@@ -62,6 +62,7 @@ namespace Archimedes.Service.Repository
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<MarketHub>("/hubs/market");
+                endpoints.MapHub<PriceHub>("/hubs/price");
             });
         }
     }
