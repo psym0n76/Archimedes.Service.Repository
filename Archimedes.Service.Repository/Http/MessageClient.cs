@@ -115,7 +115,7 @@ namespace Archimedes.Service.Repository
             }
         }
 
-        public async Task Post(PriceMessage message)
+        public void Post(PriceMessage message)
         {
             try
             {
@@ -126,7 +126,7 @@ namespace Archimedes.Service.Repository
                 }
 
                 var payload = new JsonContent(message.Prices);
-                var response = await _client.PostAsync("price", payload);
+                var response = _client.PostAsync("price", payload).Result;
 
                 if (!response.IsSuccessStatusCode)
                 {

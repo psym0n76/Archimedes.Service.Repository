@@ -6,8 +6,8 @@ namespace Archimedes.Service.Repository
 {
     public interface IMessageClient
     {
-         void Post(CandleMessage message);
-        Task Post(PriceMessage message);
+        void Post(CandleMessage message);
+        void Post(PriceMessage message);
         Task UpdateMarketMetrics(MarketDto message);
 
         Task<CandleMetricsDto> GetCandleMetrics(CandleMessage message);
