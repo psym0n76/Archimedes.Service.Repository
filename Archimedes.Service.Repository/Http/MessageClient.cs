@@ -134,8 +134,8 @@ namespace Archimedes.Service.Repository
                     return;
                 }
 
-                _logger.LogInformation(
-                    $"Successfully Posted {message.Prices.Count} Price(s) {response.ReasonPhrase} from {_client.BaseAddress}price");
+               // _logger.LogInformation(
+                 //   $"Successfully Posted {message.Prices.Count} Price(s) {response.ReasonPhrase} from {_client.BaseAddress}price");
             }
             catch (Exception e)
             {
