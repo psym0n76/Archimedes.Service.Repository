@@ -8,6 +8,7 @@ namespace Archimedes.Service.Repository
     {
         void Post(CandleMessage message);
         void Post(PriceMessage message);
+        Task DeletePricesOlderThanOneHour();
         Task UpdateMarketMetrics(MarketDto message);
 
         Task<CandleMetricsDto> GetCandleMetrics(CandleMessage message);

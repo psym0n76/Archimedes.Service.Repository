@@ -26,6 +26,23 @@ namespace Archimedes.Service.Repository
             _logger = logger;
         }
 
+        public async Task DeletePricesOlderThanOneHour()
+        {
+            try
+            {
+                var response = await _client.DeleteAsync($"price/hour");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError($"Failed to DELETE {response.ReasonPhrase} from {_client.BaseAddress}price/hour");
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Failed to DELETE from {_client.BaseAddress}price/hour {e.Message} {e.StackTrace}");
+            }
+        }
+
         public async Task UpdateMarketMetrics(MarketDto message)
         {
             try
@@ -131,11 +148,7 @@ namespace Archimedes.Service.Repository
                 if (!response.IsSuccessStatusCode)
                 {
                     _logger.LogError($"Failed to Post {response.ReasonPhrase} from {_client.BaseAddress}price");
-                    return;
                 }
-
-               // _logger.LogInformation(
-                 //   $"Successfully Posted {message.Prices.Count} Price(s) {response.ReasonPhrase} from {_client.BaseAddress}price");
             }
             catch (Exception e)
             {
