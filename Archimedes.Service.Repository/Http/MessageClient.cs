@@ -53,7 +53,6 @@ namespace Archimedes.Service.Repository
             {
                 _logger.LogError($"Error {e.Message} {e.StackTrace}");
             }
- 
         }
 
         public async Task<CandleMetricsDto> GetCandleMetrics(CandleMessage message)

@@ -38,8 +38,9 @@ namespace Archimedes.Service.Repository
             services.AddTransient<ICandleConsumer>(x => new CandleConsumer(config.RabbitHost, config.RabbitPort, config.RabbitExchange,"CandleResponseQueue"));
             services.AddTransient<IPriceConsumer>(x => new PriceConsumer(config.RabbitHost, config.RabbitPort, config.RabbitExchange,"PriceResponseQueue"));
 
-            //services.AddHostedService<CandleSubscriberService>();
-            //services.AddHostedService<PriceSubscriberService>();
+            services.AddHostedService<CandleSubscriberService>();
+            services.AddHostedService<PriceSubscriberService>();
+            services.AddHostedService<PriceDeleteService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
