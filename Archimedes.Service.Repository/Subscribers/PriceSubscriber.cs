@@ -38,7 +38,7 @@ namespace Archimedes.Service.Repository
 
         private void PostPriceMessageToRepository(MessageHandlerEventArgs args)
         {
-            //_logger.LogInformation($"Received from PriceResponseQueue Message: {args.Message}"); hidden as so many
+            _logger.LogInformation($"Received from PriceResponseQueue Message: {args.Message}");
 
             try
             {
