@@ -6,12 +6,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Archimedes.Service.Repository
 {
-    public class PriceDeleteService : BackgroundService
+    public class PriceTableDeleteService : BackgroundService
     {
         private readonly ILogger<CandleSubscriberService> _logger;
         private readonly IMessageClient _client;
 
-        public PriceDeleteService(ILogger<CandleSubscriberService> logger, IMessageClient client)
+        public PriceTableDeleteService(ILogger<CandleSubscriberService> logger, IMessageClient client)
         {
             _logger = logger;
             _client = client;
