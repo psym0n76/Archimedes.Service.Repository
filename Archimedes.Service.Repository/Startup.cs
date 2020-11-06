@@ -41,7 +41,6 @@ namespace Archimedes.Service.Repository
             services.AddTransient<IPriceConsumer>(x =>
                 new PriceFanoutConsumer(config.RabbitHost, config.RabbitPort, "Archimedes_Price"));
 
-            // services.AddTransient<IPriceConsumer>(x => new PriceConsumer(config.RabbitHost, config.RabbitPort, config.RabbitExchange,"PriceResponseQueue"));
 
             services.AddHostedService<CandleSubscriberService>();
             services.AddHostedService<PriceSubscriberService>();
