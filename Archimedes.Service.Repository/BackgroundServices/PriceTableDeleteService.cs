@@ -24,7 +24,7 @@ namespace Archimedes.Service.Repository
                 while (!stoppingToken.IsCancellationRequested)
                 {
                     await _client.DeletePricesOlderThanOneHour();
-                    await Task.Delay(3600000, stoppingToken);
+                    await Task.Delay(360000000, stoppingToken);
                 }
             }
             catch (Exception e)
