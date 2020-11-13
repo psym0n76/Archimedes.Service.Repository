@@ -37,10 +37,7 @@ namespace Archimedes.Service.Repository
             services.AddTransient<IProducer<StrategyMessage>>(x => new Producer<StrategyMessage>(config.RabbitHost, config.RabbitPort,config.RabbitExchange));
             services.AddTransient<ICandleConsumer>(x => new CandleConsumer(config.RabbitHost, config.RabbitPort, config.RabbitExchange,"CandleResponseQueue"));
 
-
-            services.AddTransient<IPriceConsumer>(x =>
-                new PriceFanoutConsumer(config.RabbitHost, config.RabbitPort, "Archimedes_Price"));
-
+            services.AddTransient<IPriceFanoutConsumer>(x => new PriceFanoutConsumer(config.RabbitHost, config.RabbitPort, "Archimedes_Price"));
 
             services.AddHostedService<CandleSubscriberService>();
             services.AddHostedService<PriceSubscriberService>();
