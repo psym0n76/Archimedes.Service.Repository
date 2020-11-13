@@ -146,7 +146,7 @@ namespace Archimedes.Service.Repository
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogError($"Failed to Post {response.ReasonPhrase} from {_client.BaseAddress}price");
+                    _logger.LogError($"Failed to Post {response.ReasonPhrase} from {_client.BaseAddress}/price");
                 }
             }
             catch (Exception e)

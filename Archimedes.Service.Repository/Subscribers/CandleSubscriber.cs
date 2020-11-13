@@ -71,6 +71,11 @@ namespace Archimedes.Service.Repository
             {
                 var metrics = await _messageClient.GetCandleMetrics(message);
 
+                if (metrics==null)
+                {
+                    return;
+                }
+
                 var market = new MarketDto()
                 {
                     Id = message.MarketId,
