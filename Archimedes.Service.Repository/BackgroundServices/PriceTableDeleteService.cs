@@ -23,7 +23,8 @@ namespace Archimedes.Service.Repository
             {
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    await _client.DeletePricesOlderThanOneHour();
+                    //await _client.DeletePricesOlderThanOneHour();
+                    _logger.LogInformation($"Disabled delete  historic prices");
                     await Task.Delay(360000000, stoppingToken);
                 }
             }
