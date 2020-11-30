@@ -13,12 +13,12 @@ namespace Archimedes.Service.Repository
     public class CandleSubscriber : ICandleSubscriber
     {
         private readonly ILogger<CandleSubscriber> _logger;
-        private readonly ICandleConsumer _consumer;
+        private readonly ICandleFanoutConsumer _consumer;
         private readonly IMessageClient _messageClient;
         private readonly IProducer<StrategyMessage> _producer;
         private readonly IHubContext<MarketHub> _context;
 
-        public CandleSubscriber(ILogger<CandleSubscriber> logger, ICandleConsumer consumer, IMessageClient messageClient, IProducer<StrategyMessage> producer, IHubContext<MarketHub> context)
+        public CandleSubscriber(ILogger<CandleSubscriber> logger, ICandleFanoutConsumer consumer, IMessageClient messageClient, IProducer<StrategyMessage> producer, IHubContext<MarketHub> context)
         {
             _logger = logger;
             _consumer = consumer;
@@ -30,7 +30,7 @@ namespace Archimedes.Service.Repository
 
         public void Consume(CancellationToken cancellationToken)
         {
-            _consumer.Subscribe(cancellationToken);
+            _consumer.Subscribe();
         }
 
         private void Consumer_HandleMessage(object sender, MessageHandlerEventArgs args)
