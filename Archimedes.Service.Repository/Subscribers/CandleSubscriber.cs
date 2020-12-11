@@ -36,7 +36,7 @@ namespace Archimedes.Service.Repository
             _logId = _batchLog.Start();
             var message = JsonConvert.DeserializeObject<CandleMessage>(e.Message);
 
-            _batchLog.Update(_logId, $"Candle Response from CandleResponseQueue: {message}");
+            _batchLog.Update(_logId, $"Received CandleResponse: {message.Market} {message.Interval}{message.TimeFrame} StartDate:{message.StartDate} EndDate:{message.EndDate} Records:{message.Candles.Count}");
             AddCandleToRepository(message);
             UpdateMarketMetrics(message);
             ProduceStrategyMessage(message);

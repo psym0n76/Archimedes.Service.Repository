@@ -71,8 +71,6 @@ namespace Archimedes.Service.Repository
 
                 var market = await response.Content.ReadAsAsync<CandleMetricsDto>();
 
-                _logger.LogInformation($"Received CandleMetrics: {market}");
-
                 return market;
             }
             catch (Exception e)
@@ -122,8 +120,7 @@ namespace Archimedes.Service.Repository
                     return;
                 }
 
-                _logger.LogInformation(
-                    $"\n\n ADDED {message.Candles.Count} Candle(s) on {message.Market} {message.Interval}{message.TimeFrame}\n");
+                _logger.LogInformation($"ADDED {message.Candles.Count} Candle(s) on {message.Market} {message.Interval}{message.TimeFrame}");
             }
             catch (Exception e)
             {
