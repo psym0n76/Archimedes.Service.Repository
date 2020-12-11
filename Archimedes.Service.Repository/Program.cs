@@ -44,9 +44,9 @@ namespace Archimedes.Service.Repository
                 }).UseNLog()
                 .ConfigureServices(services =>
                 {
-                    services.AddHostedService<PriceTableDeleteService>();
-                    services.AddHostedService<CandleSubscriberService>();
-                    services.AddHostedService<PriceSubscriberService>();
+                    //services.AddHostedService<PriceTableDeleteService>();
+                    //services.AddHostedService<CandleSubscriberService>();
+                    //services.AddHostedService<PriceSubscriberService>();
                 }
             );
 }

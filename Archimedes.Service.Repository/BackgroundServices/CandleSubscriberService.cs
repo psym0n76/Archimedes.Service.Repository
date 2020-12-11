@@ -23,6 +23,7 @@ namespace Archimedes.Service.Repository
             {
                 try
                 {
+                    _logger.LogInformation("Subscribed to CandleSubscriberService");
                     _candleSubscriber.Consume(stoppingToken);
                 }
                 catch (Exception e)
@@ -31,7 +32,12 @@ namespace Archimedes.Service.Repository
                 }
             }, stoppingToken);
 
-            return Task.CompletedTask;
+            _logger.LogWarning("Job cancelled with Token");
+
+            while (true)
+            {
+                Thread.Sleep(10000);
+            }
         }
     }
 }
