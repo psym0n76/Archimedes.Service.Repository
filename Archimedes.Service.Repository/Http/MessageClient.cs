@@ -117,10 +117,8 @@ namespace Archimedes.Service.Repository
                 if (!response.IsSuccessStatusCode)
                 {
                     _logger.LogError($"Failed to Post {response.ReasonPhrase} from {_client.BaseAddress}candle");
-                    return;
                 }
 
-                _logger.LogInformation($"ADDED {message.Candles.Count} Candle(s) on {message.Market} {message.Interval}{message.TimeFrame}");
             }
             catch (Exception e)
             {
