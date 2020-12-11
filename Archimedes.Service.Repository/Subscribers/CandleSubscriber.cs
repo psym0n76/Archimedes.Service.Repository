@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using Archimedes.Library.Logger;
 using Archimedes.Library.Message;
 using Archimedes.Library.Message.Dto;
 using Archimedes.Library.RabbitMq;
@@ -17,6 +18,8 @@ namespace Archimedes.Service.Repository
         private readonly IMessageClient _messageClient;
         private readonly IProducer<StrategyMessage> _producer;
         private readonly IHubContext<MarketHub> _context;
+        private readonly BatchLog _batchLog = new BatchLog();
+        private string _logId;
 
         public CandleSubscriber(ILogger<CandleSubscriber> logger, ICandleFanoutConsumer consumer, IMessageClient messageClient, IProducer<StrategyMessage> producer, IHubContext<MarketHub> context)
         {
@@ -28,19 +31,20 @@ namespace Archimedes.Service.Repository
             _consumer.HandleMessage += Consumer_HandleMessage;
         }
 
-        public void Consume(CancellationToken cancellationToken)
+        private void Consumer_HandleMessage(object sender, CandleMessageHandlerEventArgs e)
         {
-            _consumer.Subscribe();
-        }
+            _logId = _batchLog.Start();
+            var message = JsonConvert.DeserializeObject<CandleMessage>(e.Message);
 
-        private void Consumer_HandleMessage(object sender, MessageHandlerEventArgs args)
-        {
-            var message = JsonConvert.DeserializeObject<CandleMessage>(args.Message);
-
-            _logger.LogInformation($"Received from CandleResponseQueue: {message}");
+            _batchLog.Update(_logId, $"Candle Response from CandleResponseQueue: {message}");
             AddCandleToRepository(message);
             UpdateMarketMetrics(message);
             ProduceStrategyMessage(message);
+        }
+
+        public void Consume(CancellationToken cancellationToken)
+        {
+            _consumer.Subscribe(cancellationToken);
         }
 
         private void ProduceStrategyMessage(CandleMessage message)
@@ -55,6 +59,9 @@ namespace Archimedes.Service.Repository
                     StartDate = DateTime.Now.AddDays(-3),
                     EndDate = DateTime.Now
                 };
+
+                _batchLog.Update(_logId, "Publish to StrategyRequestQueue");
+                _logger.LogInformation(_batchLog.Print(_logId));
 
                 _producer.PublishMessage(strategyMessage,"StrategyRequestQueue");
 
@@ -73,6 +80,7 @@ namespace Archimedes.Service.Repository
 
                 if (metrics==null)
                 {
+                    _batchLog.Update(_logId, "WARNING: Missing MarketMetrics");
                     return;
                 }
 
@@ -91,7 +99,8 @@ namespace Archimedes.Service.Repository
 
                 await _messageClient.UpdateMarketMetrics(market);
 
-                _logger.LogInformation("send update to hub");
+                _batchLog.Update(_logId, "Send MarketMetrics to Hub");
+
                 await _context.Clients.All.SendAsync("Update", market);
 
             }
@@ -104,7 +113,8 @@ namespace Archimedes.Service.Repository
         private  void AddCandleToRepository(CandleMessage message)
         {
             try
-            { 
+            {
+                _batchLog.Update(_logId, "Post to Repository API");
                 _messageClient.Post(message);
             }
 

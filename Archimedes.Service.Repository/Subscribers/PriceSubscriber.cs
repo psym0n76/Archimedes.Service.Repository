@@ -24,19 +24,20 @@ namespace Archimedes.Service.Repository
             _messageClient = messageClient;
             _context = context;
             _consumer.HandleMessage += Consumer_HandleMessage;
+
+        }
+
+        private void Consumer_HandleMessage(object sender, PriceMessageHandlerEventArgs e)
+        {
+            PostPriceMessageToRepository(e);
         }
 
         public void Consume(CancellationToken cancellationToken)
         {
-            _consumer.Subscribe();
+            _consumer.Subscribe(cancellationToken);
         }
 
-        private void Consumer_HandleMessage(object sender, MessageHandlerEventArgs args)
-        {
-            PostPriceMessageToRepository(args);
-        }
-
-        private void PostPriceMessageToRepository(MessageHandlerEventArgs args)
+        private void PostPriceMessageToRepository(PriceMessageHandlerEventArgs args)
         {
             //_logger.LogInformation($"Received from PriceResponseQueue Message: {args.Message}");
 
