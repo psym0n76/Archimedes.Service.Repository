@@ -41,13 +41,6 @@ namespace Archimedes.Service.Repository
                 {
                     webBuilder.UseStartup<Startup>();
                     webBuilder.CaptureStartupErrors(false);
-                }).UseNLog()
-                .ConfigureServices(services =>
-                {
-                    //services.AddHostedService<PriceTableDeleteService>();
-                    //services.AddHostedService<CandleSubscriberService>();
-                    //services.AddHostedService<PriceSubscriberService>();
-                }
-            );
-}
+                }).UseNLog();
+    }
 }
