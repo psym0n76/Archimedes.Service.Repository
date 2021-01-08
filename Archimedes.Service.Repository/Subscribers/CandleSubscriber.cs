@@ -18,10 +18,11 @@ namespace Archimedes.Service.Repository
         private readonly IMessageClient _messageClient;
         private readonly IProducer<StrategyMessage> _producer;
         private readonly IHubContext<MarketHub> _context;
-        private readonly BatchLog _batchLog = new BatchLog();
+        private readonly BatchLog _batchLog = new();
         private string _logId;
 
-        public CandleSubscriber(ILogger<CandleSubscriber> logger, ICandleFanoutConsumer consumer, IMessageClient messageClient, IProducer<StrategyMessage> producer, IHubContext<MarketHub> context)
+        public CandleSubscriber(ILogger<CandleSubscriber> logger, ICandleFanoutConsumer consumer,
+            IMessageClient messageClient, IProducer<StrategyMessage> producer, IHubContext<MarketHub> context)
         {
             _logger = logger;
             _consumer = consumer;
@@ -34,9 +35,10 @@ namespace Archimedes.Service.Repository
         private void Consumer_HandleMessage(object sender, CandleMessageHandlerEventArgs e)
         {
             _logId = _batchLog.Start();
-            var message = JsonConvert.DeserializeObject<CandleMessage>(e.Message);
+            var message = e.Message;
 
-            _batchLog.Update(_logId, $"Received CandleResponse: {message.Market} {message.Interval}{message.TimeFrame} StartDate:{message.StartDate} EndDate:{message.EndDate} Records:{message.Candles.Count}");
+            _batchLog.Update(_logId,
+                $"Received CandleResponse: {message.Market} {message.Interval}{message.TimeFrame} StartDate:{message.StartDate} EndDate:{message.EndDate} Records:{message.Candles.Count}");
             AddCandleToRepository(message);
             UpdateMarketMetrics(message);
             ProduceStrategyMessage(message);
@@ -63,7 +65,7 @@ namespace Archimedes.Service.Repository
                 _batchLog.Update(_logId, "Publish to StrategyRequestQueue");
                 _logger.LogInformation(_batchLog.Print(_logId));
 
-                _producer.PublishMessage(strategyMessage,"StrategyRequestQueue");
+                _producer.PublishMessage(strategyMessage, "StrategyRequestQueue");
 
             }
             catch (Exception e)
@@ -78,7 +80,7 @@ namespace Archimedes.Service.Repository
             {
                 var metrics = await _messageClient.GetCandleMetrics(message);
 
-                if (metrics==null)
+                if (metrics == null)
                 {
                     _batchLog.Update(_logId, "WARNING: Missing MarketMetrics");
                     return;
@@ -110,7 +112,7 @@ namespace Archimedes.Service.Repository
             }
         }
 
-        private  void AddCandleToRepository(CandleMessage message)
+        private void AddCandleToRepository(CandleMessage message)
         {
             try
             {
