@@ -41,6 +41,11 @@ namespace Archimedes.Service.Repository
                 {
                     webBuilder.UseStartup<Startup>();
                     webBuilder.CaptureStartupErrors(false);
-                }).UseNLog();
+                }).UseNLog()
+                .ConfigureServices(services =>
+                {
+                    services.AddHostedService<CandleSubscriberService>();
+                    services.AddHostedService<PriceSubscriberService>();
+                }); // this ensures we have logging
     }
 }

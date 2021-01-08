@@ -47,13 +47,13 @@ namespace Archimedes.Service.Repository
             if (e.Message.LastCandleMessage() && e.Message.TimeFrame == "1Min")
             {
                 _batchLog.Update(_logId,
-                    $"Received CandleResponse: Strategy Request EndDate: {message.EndDate} DateRange {message.DateRanges.Max(a => a.EndDate)}");
+                    $"Received CandleResponse: Strategy Request EndDate: {message.EndDate} DateRange {message.DateRanges.Max(a => a.EndDate)} {e.Message.TimeFrame}");
                 ProduceStrategyMessage(message);
             }
             else
             {
                 _batchLog.Update(_logId,
-                    $"Received CandleResponse: NO Strategy Request EndDate: {message.EndDate} DateRange {message.DateRanges.Max(a=>a.EndDate)}");
+                    $"Received CandleResponse: NO Strategy Request EndDate: {message.EndDate} DateRange {message.DateRanges.Max(a=>a.EndDate)} {e.Message.TimeFrame}");
             }
         }
 

@@ -38,10 +38,7 @@ namespace Archimedes.Service.Repository
             services.AddTransient<IPriceFanoutConsumer>(x => new PriceFanoutConsumer(config.RabbitHost, config.RabbitPort, "Archimedes_Price"));
 
             services.AddTransient<IPriceSubscriber, PriceSubscriber>();
-
-            services.AddHostedService<CandleSubscriberService>();
-            services.AddHostedService<PriceSubscriberService>();
-            services.AddHostedService<PriceTableDeleteService>();
+            // services.AddHostedService<PriceTableDeleteService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
