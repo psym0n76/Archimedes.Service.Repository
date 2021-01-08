@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
-using Archimedes.Library.Message;
 using Archimedes.Library.RabbitMq;
 using Archimedes.Service.Repository.Hubs;
 using Microsoft.AspNetCore.SignalR;
@@ -24,7 +23,6 @@ namespace Archimedes.Service.Repository
             _messageClient = messageClient;
             _context = context;
             _consumer.HandleMessage += Consumer_HandleMessage;
-
         }
 
         private void Consumer_HandleMessage(object sender, PriceMessageHandlerEventArgs e)
@@ -39,11 +37,9 @@ namespace Archimedes.Service.Repository
 
         private void PostPriceMessageToRepository(PriceMessageHandlerEventArgs args)
         {
-            //_logger.LogInformation($"Received from PriceResponseQueue Message: {args.Message}");
-
             try
             {
-                var message = JsonConvert.DeserializeObject<PriceMessage>(args.Message);
+                var message = args.Message;
                 _messageClient.Post(message);
                 _context.Clients.All.SendAsync("Update", message.Prices.First());
             }
