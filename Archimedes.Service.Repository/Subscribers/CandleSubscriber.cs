@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using Archimedes.Library.Logger;
 using Archimedes.Library.Message;
@@ -39,9 +40,19 @@ namespace Archimedes.Service.Repository
 
             _batchLog.Update(_logId,
                 $"Received CandleResponse: {message.Market} {message.Interval}{message.TimeFrame} StartDate:{message.StartDate} EndDate:{message.EndDate} Records:{message.Candles.Count}");
+            
             AddCandleToRepository(message);
             UpdateMarketMetrics(message);
-            ProduceStrategyMessage(message);
+
+            if (e.Message.LastCandleMessage())
+            {
+                ProduceStrategyMessage(message);
+            }
+            else
+            {
+                _batchLog.Update(_logId,
+                    $"Received CandleResponse: NO Strategy Request EndDate: {message.EndDate} DateRange {message.DateRanges.Max(a=>a.EndDate)}");
+            }
         }
 
         public void Consume(CancellationToken cancellationToken)
