@@ -46,6 +46,8 @@ namespace Archimedes.Service.Repository
 
             if (e.Message.LastCandleMessage() && e.Message.TimeFrame == "1Min")
             {
+                _batchLog.Update(_logId,
+                    $"Received CandleResponse: Strategy Request EndDate: {message.EndDate} DateRange {message.DateRanges.Max(a => a.EndDate)}");
                 ProduceStrategyMessage(message);
             }
             else
