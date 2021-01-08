@@ -44,7 +44,7 @@ namespace Archimedes.Service.Repository
             AddCandleToRepository(message);
             UpdateMarketMetrics(message);
 
-            if (e.Message.LastCandleMessage())
+            if (e.Message.LastCandleMessage() && e.Message.TimeFrame == "1Min")
             {
                 ProduceStrategyMessage(message);
             }
