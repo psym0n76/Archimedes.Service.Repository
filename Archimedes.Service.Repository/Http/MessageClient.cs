@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Archimedes.Library.Domain;
 using Archimedes.Library.Extensions;
+using Archimedes.Library.Logger;
 using Archimedes.Library.Message;
 using Archimedes.Library.Message.Dto;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,8 @@ namespace Archimedes.Service.Repository
     {
         private readonly ILogger<MessageClient> _logger;
         private readonly HttpClient _client;
+        private readonly BatchLog _batchLog = new();
+        private string _logId;
 
         //https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?view=aspnetcore-3.1
 
@@ -30,16 +33,25 @@ namespace Archimedes.Service.Repository
         {
             try
             {
+                _logId = _batchLog.Start();
+                _batchLog.Update(_logId, "DELETE DeletePricesOlderThanOneHour");
+
                 var response = await _client.DeleteAsync($"price/hour");
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogError($"Failed to DELETE {response.ReasonPhrase} from {_client.BaseAddress}price/hour");
+                    if (response.RequestMessage != null)
+
+                        _logger.LogWarning(
+                            _batchLog.Print(_logId,
+                                $"DELETE Failed: {response.ReasonPhrase} from {response.RequestMessage.RequestUri}"));
                 }
+
+                _logger.LogInformation(_batchLog.Print(_logId, "Successfully Deleted"));
             }
             catch (Exception e)
             {
-                _logger.LogError($"Failed to DELETE from {_client.BaseAddress}price/hour {e.Message} {e.StackTrace}");
+                _logger.LogError(_batchLog.Print(_logId, $"Error returned from MessageClient", e));
             }
         }
 
@@ -47,11 +59,14 @@ namespace Archimedes.Service.Repository
         {
             try
             {
+                _logId = _batchLog.Start();
+                _batchLog.Update(_logId,
+                    $"UpdateMarketMetrics {message.Name} {message.Granularity} {message.LastUpdated}");
                 await UpdateMarket(message);
             }
             catch (Exception e)
             {
-                _logger.LogError($"Error {e.Message} {e.StackTrace}");
+                _logger.LogError(_batchLog.Print(_logId, $"Error returned from MessageClient", e));
             }
         }
 
@@ -59,24 +74,33 @@ namespace Archimedes.Service.Repository
         {
             try
             {
+                _logId = _batchLog.Start();
+                _batchLog.Update(_logId, $"GET GetCandleMetrics {message.Market} {message.TimeFrame}");
+
                 var response =
                     await _client.GetAsync(
                         $"candle/candle_metrics?market={message.Market}&granularity={message.Interval}{message.TimeFrame}");
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogError($"Failed to Get {response.ReasonPhrase} from {_client.BaseAddress}candle/candle_metrics?market={message.Market}&granularity={message.Interval}{message.TimeFrame}");
-                    return default;
+                    if (response.RequestMessage != null)
+
+                        _logger.LogWarning(
+                            _batchLog.Print(_logId,
+                                $"GET Failed: {response.ReasonPhrase} from {response.RequestMessage.RequestUri}"));
+
+
+                    return new CandleMetricsDto();
                 }
 
-                var market = await response.Content.ReadAsAsync<CandleMetricsDto>();
+                _logger.LogInformation(_batchLog.Print(_logId, $"Returned 1 Record"));
+                return await response.Content.ReadAsAsync<CandleMetricsDto>();
 
-                return market;
             }
             catch (Exception e)
             {
-                _logger.LogError($"Error {e.Message} {e.StackTrace}");
-                return default;
+                _logger.LogError(_batchLog.Print(_logId, $"Error returned from MessageClient", e));
+                return new CandleMetricsDto();
             }
         }
 
@@ -84,6 +108,8 @@ namespace Archimedes.Service.Repository
         {
             try
             {
+                _logId = _batchLog.Start();
+                _batchLog.Update(_logId, $"GET UpdateMarket {metric.Name} {metric.TimeFrame}");
                 var payload = new JsonContent(metric);
 
                 var response =
@@ -91,38 +117,56 @@ namespace Archimedes.Service.Repository
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogError($"Failed to Post {response.ReasonPhrase} from {_client.BaseAddress}candle");
+                    if (response.RequestMessage != null)
+
+                        _logger.LogWarning(
+                            _batchLog.Print(_logId,
+                                $"PUT Failed: {response.ReasonPhrase} from {response.RequestMessage.RequestUri}"));
+
                 }
+
+                _logger.LogInformation(_batchLog.Print(_logId, $"Updated Market"));
 
             }
             catch (Exception e)
             {
-                _logger.LogError($"Error {e.Message} {e.StackTrace}");
+                _logger.LogError(_batchLog.Print(_logId, $"Error returned from MessageClient", e));
             }
         }
 
         public void Post(CandleMessage message)
         {
+            _logId = _batchLog.Start();
+            _batchLog.Update(_logId, $"POST AddCandle {message.Market} {message.TimeFrame}");
+
             if (message.Candles == null)
             {
-                _logger.LogError($"Candle payload is empty");
+                _logger.LogWarning(_batchLog.Print(_logId, "Price payload is empty"));
                 return;
             }
 
             try
             {
                 var payload = new JsonContent(message.Candles);
-                var response =  _client.PostAsync("candle", payload).Result; //switched to synchronous as i need wait to get max candle
+                var response =
+                    _client.PostAsync("candle", payload)
+                        .Result; //switched to synchronous as i need wait to get max candle
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogError($"Failed to Post {response.ReasonPhrase} from {_client.BaseAddress}candle");
+                    if (response.RequestMessage != null)
+
+                        _logger.LogWarning(
+                            _batchLog.Print(_logId,
+                                $"POST Failed: {response.ReasonPhrase} from {response.RequestMessage.RequestUri}"));
+
                 }
 
+                _logger.LogInformation(_batchLog.Print(_logId, $"ADDED Candle"));
             }
             catch (Exception e)
             {
-                _logger.LogError($"Error {e.Message} {e.StackTrace}");
+                _logger.LogError(_batchLog.Print(_logId, $"Error returned from MessageClient", e));
             }
         }
 
@@ -130,9 +174,12 @@ namespace Archimedes.Service.Repository
         {
             try
             {
+                _logId = _batchLog.Start();
+                _batchLog.Update(_logId, $"GET GetCandleMetrics {message.Market}");
+                
                 if (message.Prices == null)
                 {
-                    _logger.LogError($"Price payload is empty");
+                    _logger.LogWarning(_batchLog.Print(_logId, "Price payload is empty"));
                     return;
                 }
 
@@ -141,12 +188,20 @@ namespace Archimedes.Service.Repository
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogError($"Failed to Post {response.ReasonPhrase} from {_client.BaseAddress}/price");
+                    if (response.RequestMessage != null)
+
+                        _logger.LogWarning(
+                            _batchLog.Print(_logId,
+                                $"POST Failed: {response.ReasonPhrase} from {response.RequestMessage.RequestUri}"));
+
+
                 }
+
+                _logger.LogInformation(_batchLog.Print(_logId, $"ADDED Price"));
             }
             catch (Exception e)
             {
-                _logger.LogError($"Error {e.Message} {e.StackTrace}");
+                _logger.LogError(_batchLog.Print(_logId, $"Error returned from MessageClient", e));
             }
         }
     }

@@ -23,7 +23,6 @@ namespace Archimedes.Service.Repository
 
             Task.Run(() =>
             {
-
                 try
                 {
                     stoppingToken.ThrowIfCancellationRequested();

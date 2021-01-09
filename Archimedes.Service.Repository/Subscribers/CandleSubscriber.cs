@@ -39,7 +39,7 @@ namespace Archimedes.Service.Repository
             var message = e.Message;
 
             _batchLog.Update(_logId,
-                $"Received CandleResponse: {message.Market} {message.Interval}{message.TimeFrame} StartDate:{message.StartDate} EndDate:{message.EndDate} Records:{message.Candles.Count}");
+                $"CandleSubscriber {message.Market} {message.Interval}{message.TimeFrame} StartDate:{message.StartDate} EndDate:{message.EndDate} Records:{message.Candles.Count}");
             
             AddCandleToRepository(message);
             UpdateMarketMetrics(message);
@@ -47,14 +47,16 @@ namespace Archimedes.Service.Repository
             if (e.Message.LastCandleMessage() && e.Message.TimeFrame == "1Min")
             {
                 _batchLog.Update(_logId,
-                    $"Received CandleResponse: Strategy Request EndDate: {message.EndDate} DateRange {message.DateRanges.Max(a => a.EndDate)} {e.Message.TimeFrame}");
+                    $"CandleSubscriber Strategy Request EndDate: {message.EndDate} DateRange {message.DateRanges.Max(a => a.EndDate)} {e.Message.TimeFrame}");
                 ProduceStrategyMessage(message);
             }
             else
             {
                 _batchLog.Update(_logId,
-                    $"Received CandleResponse: NO Strategy Request EndDate: {message.EndDate} DateRange {message.DateRanges.Max(a=>a.EndDate)} {e.Message.TimeFrame}");
+                    $"CandleSubscriber: NO Strategy Request EndDate: {message.EndDate} DateRange {message.DateRanges.Max(a=>a.EndDate)} {e.Message.TimeFrame}");
             }
+            
+            _logger.LogInformation(_batchLog.Print(_logId));
         }
 
         public void Consume(CancellationToken cancellationToken)
@@ -66,6 +68,7 @@ namespace Archimedes.Service.Repository
         {
             try
             {
+                _batchLog.Update(_logId, "ProduceStrategyMessage");
                 var strategyMessage = new StrategyMessage()
                 {
                     Interval = message.Interval,
@@ -83,7 +86,7 @@ namespace Archimedes.Service.Repository
             }
             catch (Exception e)
             {
-                _logger.LogError($"Unable to Add Strategy message to Rabbit{e.Message} {e.StackTrace}");
+                _logger.LogError(_batchLog.Print(_logId, $"Error returned from CandleSubscriber ", e));
             }
         }
 
@@ -121,7 +124,7 @@ namespace Archimedes.Service.Repository
             }
             catch (Exception e)
             {
-                _logger.LogError($"Unable to Update Market Metrics message {e.Message} {e.StackTrace}");
+                 _logger.LogError(_batchLog.Print(_logId,$"Error returned from CandleSubscriber ",e));
             }
         }
 
@@ -135,12 +138,12 @@ namespace Archimedes.Service.Repository
 
             catch (JsonException j)
             {
-                _logger.LogError($"Unable to Parse Candle message {j.Message} {j.StackTrace}");
+                _logger.LogError(_batchLog.Print(_logId, $"Unable to Parse Candle message ", j));
             }
 
             catch (Exception e)
             {
-                _logger.LogError($"Unable to Add Candle message to API {e.Message} {e.StackTrace}");
+                _logger.LogError(_batchLog.Print(_logId, $"Error returned from CandleSubscriber ", e));
             }
         }
     }
