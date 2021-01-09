@@ -23,7 +23,13 @@ namespace Archimedes.Service.Repository
             {
                 try
                 {
+                    stoppingToken.ThrowIfCancellationRequested();
+                    _logger.LogInformation($"Subscribed to PriceSubscriberService");
                     _priceSubscriber.Consume(stoppingToken);
+                }
+                catch (OperationCanceledException ox)
+                {
+                    _logger.LogError($"Cancellation Invoked {ox.Message} \n\nRetry after 5 secs");
                 }
                 catch (Exception e)
                 {

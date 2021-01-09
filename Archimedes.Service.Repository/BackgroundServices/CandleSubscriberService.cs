@@ -10,7 +10,6 @@ namespace Archimedes.Service.Repository
     {
         private readonly ICandleSubscriber _candleSubscriber;
         private readonly ILogger<CandleSubscriberService> _logger;
-        private int _counter;
 
         public CandleSubscriberService(ICandleSubscriber candleSubscriber, ILogger<CandleSubscriberService> logger)
         {
@@ -20,29 +19,28 @@ namespace Archimedes.Service.Repository
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-
-            if (_counter != 0)
-            {
-                _logger.LogInformation("Already Subscribed to CandleSubscriberService");
-                return Task.CompletedTask;
-            }
-
-            _counter++;
+            _logger.LogInformation($"Running CandleSubscriberService");
 
             Task.Run(() =>
             {
+
                 try
                 {
-                    _logger.LogInformation($"Subscribed to CandleSubscriberService {_counter}");
+                    stoppingToken.ThrowIfCancellationRequested();
+                    _logger.LogInformation($"Subscribed to CandleSubscriberService");
                     _candleSubscriber.Consume(stoppingToken);
                 }
+                catch (OperationCanceledException ox)
+                {
+                    _logger.LogError($"Cancellation Invoked {ox.Message} \n\nRetry after 5 secs");
+                }
+
                 catch (Exception e)
                 {
                     _logger.LogError($"Unknown error found in CandleBackgroundService: {e.Message} {e.StackTrace}");
                 }
-            }, stoppingToken);
 
-            _logger.LogWarning("Job cancelled with Token");
+            }, stoppingToken);
 
             return Task.CompletedTask;
         }

@@ -28,6 +28,7 @@ namespace Archimedes.Service.Repository
                     await Task.Delay(360000000, stoppingToken);
                 }
             }
+            
             catch (Exception e)
             {
                 _logger.LogInformation($"Error deleting historic prices {e.Message} {e.StackTrace}");

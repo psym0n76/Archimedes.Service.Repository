@@ -35,7 +35,7 @@ namespace Archimedes.Service.Repository
                     logging.AddConsole();
                     logging.AddDebug();
                     logging.AddEventLog();
-                    logging.SetMinimumLevel(LogLevel.Trace);
+                    logging.SetMinimumLevel(LogLevel.Information);
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

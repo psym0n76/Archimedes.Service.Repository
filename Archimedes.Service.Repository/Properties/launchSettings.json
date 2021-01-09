@@ -1,13 +1,13 @@
 {
+  "$schema": "http://json.schemastore.org/launchsettings.json",
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:60753",
-      "sslPort": 44333
+      "applicationUrl": "http://localhost:62802",
+      "sslPort": 44378
     }
   },
-  "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
@@ -15,17 +15,16 @@
       "launchUrl": "api/health",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "HostingModel": "InProcess"
+      }
     },
-    "Archimedes.Fx.Service.Repository": {
+    "Archimedes.Service.Health": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "api/health",
+      "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "https://localhost:5001;http://localhost:5000"
+      }
     }
   }
 }

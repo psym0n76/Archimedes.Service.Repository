@@ -30,6 +30,7 @@ namespace Archimedes.Service.Repository
             services.AddHttpClient<IMessageClient, MessageClient>();
             services.AddLogging();
             services.AddSignalR();
+            services.AddControllers();
 
             services.AddTransient<ICandleSubscriber, CandleSubscriber>();
 
