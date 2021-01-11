@@ -44,16 +44,21 @@ namespace Archimedes.Service.Repository
             AddCandleToRepository(message);
             UpdateMarketMetrics(message);
 
-            if (e.Message.LastCandleMessage() && e.Message.TimeFrame == "1Min")
+
+
+            _batchLog.Update(_logId,
+                $"Test LastCandleMessage: {e.Message.LastCandleMessage()} Timeframe: {e.Message.Interval}{e.Message.TimeFrame}");
+
+            if (e.Message.LastCandleMessage() && $"{e.Message.Interval}{e.Message.TimeFrame}" != "1Min")
             {
                 _batchLog.Update(_logId,
-                    $"CandleSubscriber Strategy Request EndDate: {message.EndDate} DateRange {message.DateRanges.Max(a => a.EndDate)} {e.Message.TimeFrame}");
+                    $"CandleSubscriber Strategy Request EndDate: {message.EndDate} DateRange {message.DateRanges.Max(a => a.EndDate)} {e.Message.Interval}{e.Message.TimeFrame}");
                 ProduceStrategyMessage(message);
             }
             else
             {
                 _batchLog.Update(_logId,
-                    $"CandleSubscriber: NO Strategy Request EndDate: {message.EndDate} DateRange {message.DateRanges.Max(a=>a.EndDate)} {e.Message.TimeFrame}");
+                    $"CandleSubscriber: Strategy Request NOT REQUIRED EndDate: {message.EndDate} DateRange {message.DateRanges.Max(a=>a.EndDate)} {e.Message.Interval}{e.Message.TimeFrame}");
             }
             
             _logger.LogInformation(_batchLog.Print(_logId));
