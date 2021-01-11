@@ -175,7 +175,7 @@ namespace Archimedes.Service.Repository
             try
             {
                 _logId = _batchLog.Start();
-                _batchLog.Update(_logId, $"GET GetCandleMetrics {message.Market}");
+                _batchLog.Update(_logId, $"POST PostPrice {message.Market}");
                 
                 if (message.Prices == null)
                 {
