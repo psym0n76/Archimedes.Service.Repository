@@ -10,7 +10,7 @@
 
   <ItemGroup>
 
-    <PackageReference Include="Archimedes.Library" Version="1.0.335" />
+    <PackageReference Include="Archimedes.Library" Version="1.0.338" />
 
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="3.1.9" />
 
