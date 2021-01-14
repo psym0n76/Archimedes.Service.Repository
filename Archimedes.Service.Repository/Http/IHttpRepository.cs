@@ -1,12 +1,14 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Archimedes.Library.Message;
 using Archimedes.Library.Message.Dto;
 
 namespace Archimedes.Service.Repository
 {
-    public interface IMessageClient
+    public interface IHttpRepository
     {
-        void Post(CandleMessage message);
+        Task PostCandle(CandleDto candle);
+        Task PostCandles(List<CandleDto> candle);
         void Post(PriceMessage message);
         Task DeletePricesOlderThanOneHour();
         Task UpdateMarketMetrics(MarketDto message);

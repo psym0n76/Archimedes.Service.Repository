@@ -16,14 +16,14 @@ namespace Archimedes.Service.Repository
     {
         private readonly ILogger<CandleSubscriber> _logger;
         private readonly ICandleFanoutConsumer _consumer;
-        private readonly IMessageClient _messageClient;
+        private readonly IHttpRepository _messageClient;
         private readonly IProducer<StrategyMessage> _producer;
         private readonly IHubContext<MarketHub> _context;
         private readonly BatchLog _batchLog = new();
         private string _logId;
 
         public CandleSubscriber(ILogger<CandleSubscriber> logger, ICandleFanoutConsumer consumer,
-            IMessageClient messageClient, IProducer<StrategyMessage> producer, IHubContext<MarketHub> context)
+            IHttpRepository messageClient, IProducer<StrategyMessage> producer, IHubContext<MarketHub> context)
         {
             _logger = logger;
             _consumer = consumer;
@@ -41,10 +41,8 @@ namespace Archimedes.Service.Repository
             _batchLog.Update(_logId,
                 $"CandleSubscriber {message.Market} {message.Interval}{message.TimeFrame} StartDate:{message.StartDate} EndDate:{message.EndDate} Records:{message.Candles.Count}");
             
-            AddCandleToRepository(message);
+            AddCandleToTable(message);
             UpdateMarketMetrics(message);
-
-
 
             _batchLog.Update(_logId,
                 $"Test LastCandleMessage: {e.Message.LastCandleMessage()} Timeframe: {e.Message.Interval}{e.Message.TimeFrame}");
@@ -133,12 +131,20 @@ namespace Archimedes.Service.Repository
             }
         }
 
-        private void AddCandleToRepository(CandleMessage message)
+        private void AddCandleToTable(CandleMessage message)
         {
             try
             {
-                _batchLog.Update(_logId, "Post to Repository API");
-                _messageClient.Post(message);
+                _batchLog.Update(_logId, $"{nameof(AddCandleToTable)} {message.Market} {message.TimeFrame}");
+
+                if (!message.Candles.Any())
+                {
+                    _logger.LogWarning(_batchLog.Print(_logId,"Candles missing"));
+                }
+                
+                _messageClient.PostCandles(message.Candles);
+                
+                _logger.LogInformation(_batchLog.Print(_logId));
             }
 
             catch (JsonException j)

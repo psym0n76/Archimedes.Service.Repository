@@ -27,7 +27,7 @@ namespace Archimedes.Service.Repository
 
             var config = Configuration.GetSection("AppSettings").Get<Config>();
 
-            services.AddHttpClient<IMessageClient, MessageClient>();
+            services.AddHttpClient<IHttpRepository, HttpRepository>();
             services.AddLogging();
             services.AddSignalR();
             services.AddControllers();

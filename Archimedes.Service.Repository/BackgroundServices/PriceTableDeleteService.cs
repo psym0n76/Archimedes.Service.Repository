@@ -9,9 +9,9 @@ namespace Archimedes.Service.Repository
     public class PriceTableDeleteService : BackgroundService
     {
         private readonly ILogger<CandleSubscriberService> _logger;
-        private readonly IMessageClient _client;
+        private readonly IHttpRepository _client;
 
-        public PriceTableDeleteService(ILogger<CandleSubscriberService> logger, IMessageClient client)
+        public PriceTableDeleteService(ILogger<CandleSubscriberService> logger, IHttpRepository client)
         {
             _logger = logger;
             _client = client;

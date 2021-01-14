@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Archimedes.Library.Domain;
@@ -11,17 +14,17 @@ using Microsoft.Extensions.Options;
 
 namespace Archimedes.Service.Repository
 {
-    public class MessageClient : IMessageClient
+    public class HttpRepository : IHttpRepository
     {
-        private readonly ILogger<MessageClient> _logger;
+        private readonly ILogger<HttpRepository> _logger;
         private readonly HttpClient _client;
         private readonly BatchLog _batchLog = new();
         private string _logId;
 
         //https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?view=aspnetcore-3.1
 
-        public MessageClient(IOptions<Config> config, HttpClient httpClient,
-            ILogger<MessageClient> logger)
+        public HttpRepository(IOptions<Config> config, HttpClient httpClient,
+            ILogger<HttpRepository> logger)
         {
             httpClient.BaseAddress = new Uri($"{config.Value.ApiRepositoryUrl}");
             httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -134,32 +137,46 @@ namespace Archimedes.Service.Repository
             }
         }
 
-        public void Post(CandleMessage message)
+
+        public async Task PostCandles(List<CandleDto> candles)
         {
             _logId = _batchLog.Start();
-            _batchLog.Update(_logId, $"POST AddCandle {message.Market} {message.TimeFrame}");
-
-            if (message.Candles == null)
+            _batchLog.Update(_logId, $"POST {nameof(PostCandles)} {candles[0].Market} {candles[0].Granularity} {candles.Count} Candle(s)");
+            
+            foreach (var candle in candles)
             {
-                _logger.LogWarning(_batchLog.Print(_logId, "Price payload is empty"));
-                return;
+                await PostCandle(candle);
             }
+            
+            _logger.LogInformation(_batchLog.Print(_logId));
+        }
+
+
+        public async Task PostCandle(CandleDto message)
+        {
+            _logId = _batchLog.Start();
+            _batchLog.Update(_logId, $"POST {nameof(PostCandle)} {message.Market} {message.Granularity} {message.TimeStamp}");
 
             try
             {
-                var payload = new JsonContent(message.Candles);
-                var response =
-                    _client.PostAsync("candle", payload)
-                        .Result; //switched to synchronous as i need wait to get max candle
+                var payload = new JsonContent(message);
+                var response = await _client.PostAsync("candle", payload); //switched to synchronous as i need wait to get max candle
 
                 if (!response.IsSuccessStatusCode)
                 {
+                    var errorResponse = await response.Content.ReadAsAsync<string>();
+
+                    if (response.StatusCode == HttpStatusCode.UnprocessableEntity)
+                    {
+                        _logger.LogWarning(_batchLog.Print(_logId, $"POST FAILED: {errorResponse}"));
+                        return;
+                    }
+
                     if (response.RequestMessage != null)
-
-                        _logger.LogWarning(
-                            _batchLog.Print(_logId,
-                                $"POST Failed: {response.ReasonPhrase} from {response.RequestMessage.RequestUri}"));
-
+                    {
+                        _logger.LogError(_batchLog.Print(_logId, $"POST FAILED: {response.ReasonPhrase} from {response.RequestMessage.RequestUri}"));
+                        return;
+                    }
                 }
 
                 _logger.LogInformation(_batchLog.Print(_logId, $"ADDED Candle"));
@@ -169,6 +186,7 @@ namespace Archimedes.Service.Repository
                 _logger.LogError(_batchLog.Print(_logId, $"Error returned from MessageClient", e));
             }
         }
+
 
         public void Post(PriceMessage message)
         {

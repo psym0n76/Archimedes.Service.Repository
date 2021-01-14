@@ -13,10 +13,10 @@ namespace Archimedes.Service.Repository
     {
         private readonly ILogger<PriceSubscriber> _logger;
         private readonly IPriceFanoutConsumer _consumer;
-        private readonly IMessageClient _messageClient;
+        private readonly IHttpRepository _messageClient;
         private readonly IHubContext<PriceHub> _context;
 
-        public PriceSubscriber(ILogger<PriceSubscriber> log, IPriceFanoutConsumer consumer, IMessageClient messageClient, IHubContext<PriceHub> context)
+        public PriceSubscriber(ILogger<PriceSubscriber> log, IPriceFanoutConsumer consumer, IHttpRepository messageClient, IHubContext<PriceHub> context)
         {
             _logger = log;
             _consumer = consumer;
