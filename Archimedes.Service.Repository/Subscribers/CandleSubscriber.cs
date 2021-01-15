@@ -84,7 +84,7 @@ namespace Archimedes.Service.Repository
                 _batchLog.Update(_logId, "Publish to StrategyRequestQueue");
                 _logger.LogInformation(_batchLog.Print(_logId));
 
-                _producer.PublishMessage(strategyMessage, "StrategyRequestQueue");
+                _producer.PublishMessage(strategyMessage, "StrategyRequestQueue","5000");
 
             }
             catch (Exception e)
