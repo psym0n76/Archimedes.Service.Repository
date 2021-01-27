@@ -93,7 +93,7 @@ namespace Archimedes.Service.Repository
         private async void UpdateMarketMetrics(CandleMessage message)
         {
             var logId = _batchLog.Start(
-                $"{nameof(UpdateMarketMetrics)} {message.Id} {message.ExternalMarketId} {message.TimeFrame}");
+                $"{nameof(UpdateMarketMetrics)} Id: {message.Id} MarketId: {message.MarketId} ExtId: {message.ExternalMarketId} {message.TimeFrame}");
             try
             {
                 var metrics = await _messageClient.GetCandleMetrics(message);
@@ -114,7 +114,9 @@ namespace Archimedes.Service.Repository
                     Interval = message.Interval,
                     MaxDate = metrics.MaxDate,
                     MinDate = metrics.MinDate,
-                    Quantity = metrics.Quantity
+                    Quantity = metrics.Quantity,
+                    ExternalMarketId = message.ExternalMarketId
+                    
                 };
 
                 await _messageClient.UpdateMarket(market);
