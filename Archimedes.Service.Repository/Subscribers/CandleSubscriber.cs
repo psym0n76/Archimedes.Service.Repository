@@ -107,7 +107,7 @@ namespace Archimedes.Service.Repository
                 {
                     Id = message.MarketId,
                     Name = message.Market,
-                    Granularity = message.Interval + message.TimeFrame,
+                    Granularity = message.TimeFrame,
                     TimeFrame = message.TimeFrame,
                     LastUpdated = DateTime.Now,
                     Interval = message.Interval,
