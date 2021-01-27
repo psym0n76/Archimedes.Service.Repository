@@ -89,13 +89,13 @@ namespace Archimedes.Service.Repository
             }
         }
 
-        public async Task UpdateMarket(MarketDto metric)
+        public async Task UpdateMarket(MarketDto market)
         {
-            var logId = _batchLog.Start($"{nameof(UpdateMarket)} {metric.Name} {metric.TimeFrame}");
+            var logId = _batchLog.Start($"{nameof(UpdateMarket)} {market.Name} {market.TimeFrame} Id: {market.Id} ExtId: {market.ExternalMarketId}");
 
             try
             {
-                var payload = new JsonContent(metric);
+                var payload = new JsonContent(market);
                 var response =
                     await _client.PutAsync("market/market_metrics", payload);
 
