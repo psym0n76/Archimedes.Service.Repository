@@ -115,8 +115,8 @@ namespace Archimedes.Service.Repository
                     MaxDate = metrics.MaxDate,
                     MinDate = metrics.MinDate,
                     Quantity = metrics.Quantity,
-                    ExternalMarketId = message.ExternalMarketId
-                    
+                    ExternalMarketId = message.ExternalMarketId,
+
                 };
 
                 await _messageClient.UpdateMarket(market);
