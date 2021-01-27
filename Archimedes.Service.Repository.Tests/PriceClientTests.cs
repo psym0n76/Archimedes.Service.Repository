@@ -24,7 +24,7 @@ namespace Archimedes.Service.Repository.Tests
         {
             var subject = GetSubjectUnderTest(HttpStatusCode.Accepted);
 
-            Assert.DoesNotThrow(() => subject.Post(MockPriceResponse()));
+            Assert.DoesNotThrow(() => subject.PostPrice(MockPriceResponse()));
         }
 
         private static IHttpRepository GetSubjectUnderTest(HttpStatusCode statusCode)

@@ -40,7 +40,7 @@ namespace Archimedes.Service.Repository
             try
             {
                 var message = args.Message;
-                _messageClient.Post(message);
+                _messageClient.PostPrice(message);
                 _context.Clients.All.SendAsync("Update", message.Prices.First());
             }
 
@@ -51,7 +51,7 @@ namespace Archimedes.Service.Repository
 
             catch (Exception e)
             {
-                _logger.LogError($"Unable to Post Price message to API {e.Message} {e.StackTrace}");
+                _logger.LogError($"Unable to PostPrice Price message to API {e.Message} {e.StackTrace}");
             }
         }
     }
