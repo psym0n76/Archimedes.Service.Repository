@@ -40,10 +40,10 @@ namespace Archimedes.Service.Repository
             AddCandleToTable(message);
             UpdateMarketMetrics(message);
 
-            _batchLog.Update(logId,
-                $"LastCandleMessage: {message.LastCandleMessage()}");
+            //_batchLog.Update(logId,
+            //    $"LastCandleMessage: {message.LastCandleMessage()}");
 
-            if (message.LastCandleMessage() && $"{message.TimeFrame}" != "1Min")
+            if (message.TimeFrame != "1Min")
             {
                 _batchLog.Update(logId,
                     $"CandleSubscriber Strategy Request EndDate: {message.EndDate} DateRange {message.DateRanges.Max(a => a.EndDate)} {message.Interval}{message.TimeFrame}");
@@ -106,6 +106,7 @@ namespace Archimedes.Service.Repository
 
                 var market = new MarketDto()
                 {
+                    
                     Id = message.MarketId,
                     Name = message.Market,
                     Granularity = message.TimeFrame,
