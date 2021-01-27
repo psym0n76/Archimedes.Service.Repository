@@ -35,19 +35,17 @@ namespace Archimedes.Service.Repository
 
         private void Consumer_HandleMessage(object sender, CandleMessageHandlerEventArgs e)
         {
-            _logId = _batchLog.Start();
             var message = e.Message;
 
-            _batchLog.Update(_logId,
-                $"CandleSubscriber {message.Market} {message.Interval}{message.TimeFrame} StartDate:{message.StartDate} EndDate:{message.EndDate} Records:{message.Candles.Count}");
-            
+            _logId = _batchLog.Start($"CandleSubscriber {message.Market} {message.TimeFrame} StartDate: {message.StartDate} EndDate: {message.EndDate} {message.Candles.Count} Candle(s)");
+
             AddCandleToTable(message);
             UpdateMarketMetrics(message);
 
             _batchLog.Update(_logId,
-                $"Test LastCandleMessage: {e.Message.LastCandleMessage()} Timeframe: {e.Message.Interval}{e.Message.TimeFrame}");
+                $"LastCandleMessage: {e.Message.LastCandleMessage()}");
 
-            if (e.Message.LastCandleMessage() && $"{e.Message.Interval}{e.Message.TimeFrame}" != "1Min")
+            if (e.Message.LastCandleMessage() && $"{e.Message.TimeFrame}" != "1Min")
             {
                 _batchLog.Update(_logId,
                     $"CandleSubscriber Strategy Request EndDate: {message.EndDate} DateRange {message.DateRanges.Max(a => a.EndDate)} {e.Message.Interval}{e.Message.TimeFrame}");
