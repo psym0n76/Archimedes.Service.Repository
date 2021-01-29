@@ -8,6 +8,7 @@ using Archimedes.Library.Extensions;
 using Archimedes.Library.Logger;
 using Archimedes.Library.Message;
 using Archimedes.Library.Message.Dto;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -64,7 +65,7 @@ namespace Archimedes.Service.Repository
             {
                 var response =
                     await _client.GetAsync(
-                        $"candle/candle_metrics?market={message.Market}&granularity={message.TimeFrame}");
+                        $"candle/candle_metrics?market={message.Market}&granularity={message.Interval}{message.TimeFrame}");
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -119,20 +120,24 @@ namespace Archimedes.Service.Repository
         }
 
 
-        public async Task PostCandles(List<CandleDto> candles)
+        public async Task<bool> PostCandles(List<CandleDto> candles)
         {
             var logId = _batchLog.Start($"{nameof(PostCandles)} {candles[0].Market} {candles[0].Granularity} {candles.Count} Candle(s)");
 
             foreach (var candle in candles)
             {
-                await PostCandle(candle);
+                if (!await PostCandle(candle))
+                {
+                    return false;
+                }
             }
             
             _logger.LogInformation(_batchLog.Print(logId));
+            return true;
         }
 
 
-        public async Task PostCandle(CandleDto message)
+        public async Task<bool> PostCandle(CandleDto message)
         {
             var logId = _batchLog.Start($"POST {nameof(PostCandle)} {message.Market} {message.Granularity} {message.TimeStamp}");
 
@@ -143,26 +148,27 @@ namespace Archimedes.Service.Repository
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var errorResponse = await response.Content.ReadAsAsync<string>();
-
-                    if (response.StatusCode == HttpStatusCode.UnprocessableEntity)
-                    {
-                        _logger.LogWarning(_batchLog.Print(logId, $"POST FAILED: {errorResponse}"));
-                        return;
-                    }
 
                     if (response.RequestMessage != null)
                     {
+                        if (response.StatusCode == HttpStatusCode.UnprocessableEntity)
+                        {
+                            _logger.LogWarning(_batchLog.Print(logId, $"POST FAILED: {response.ReasonPhrase}"));
+                            return false;
+                        }
+
                         _logger.LogError(_batchLog.Print(logId, $"POST FAILED: {response.ReasonPhrase} from {response.RequestMessage.RequestUri}"));
-                        return;
+                        return false;
                     }
                 }
 
                 _logger.LogInformation(_batchLog.Print(logId, $"ADDED Candle"));
+                return true;
             }
             catch (Exception e)
             {
                 _logger.LogError(_batchLog.Print(logId, $"Error returned from MessageClient", e));
+                return false;
             }
         }
 

@@ -7,8 +7,8 @@ namespace Archimedes.Service.Repository
 {
     public interface IHttpRepository
     {
-        Task PostCandle(CandleDto candle);
-        Task PostCandles(List<CandleDto> candle);
+        Task<bool> PostCandle(CandleDto candle);
+        Task<bool> PostCandles(List<CandleDto> candle);
         void PostPrice(PriceMessage message);
         Task DeletePricesOlderThanOneHour();
         Task UpdateMarket(MarketDto message);

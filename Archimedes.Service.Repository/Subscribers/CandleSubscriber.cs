@@ -35,7 +35,8 @@ namespace Archimedes.Service.Repository
         private void Consumer_HandleMessage(object sender, CandleMessageHandlerEventArgs e)
         {
             var message = e.Message;
-            var logId = _batchLog.Start($"{nameof(Consumer_HandleMessage)} {message.Market} {message.TimeFrame} StartDate: {message.StartDate} EndDate: {message.EndDate} {message.Candles.Count} Candle(s)");
+            var logId = _batchLog.Start(
+                $"{nameof(Consumer_HandleMessage)} {message.Market} {message.TimeFrame} StartDate: {message.StartDate} EndDate: {message.EndDate} {message.Candles.Count} Candle(s)");
 
             AddCandleToTable(message);
             UpdateMarketMetrics(message);
@@ -52,9 +53,9 @@ namespace Archimedes.Service.Repository
             else
             {
                 _batchLog.Update(logId,
-                    $"CandleSubscriber: Strategy Request NOT REQUIRED EndDate: {message.EndDate} DateRange {message.DateRanges.Max(a=>a.EndDate)} {message.Interval}{message.TimeFrame}");
+                    $"CandleSubscriber: Strategy Request NOT REQUIRED EndDate: {message.EndDate} DateRange {message.DateRanges.Max(a => a.EndDate)} {message.Interval}{message.TimeFrame}");
             }
-            
+
             _logger.LogInformation(_batchLog.Print(logId));
         }
 
@@ -67,7 +68,7 @@ namespace Archimedes.Service.Repository
         {
             var logId = _batchLog.Start(
                 $"{nameof(ProduceStrategyMessage)} {message.Id} {message.ExternalMarketId} {message.TimeFrame}");
-            
+
             try
             {
                 var strategyMessage = new StrategyMessage()
@@ -81,7 +82,7 @@ namespace Archimedes.Service.Repository
 
                 _logger.LogInformation(_batchLog.Print(logId, "Publish to StrategyRequestQueue"));
 
-                _producer.PublishMessage(strategyMessage, "StrategyRequestQueue","5000");
+                _producer.PublishMessage(strategyMessage, "StrategyRequestQueue", "5000");
 
             }
             catch (Exception e)
@@ -106,7 +107,7 @@ namespace Archimedes.Service.Repository
 
                 var market = new MarketDto()
                 {
-                    
+
                     Id = message.MarketId,
                     Name = message.Market,
                     Granularity = message.TimeFrame,
@@ -129,23 +130,28 @@ namespace Archimedes.Service.Repository
             }
             catch (Exception e)
             {
-                 _logger.LogError(_batchLog.Print(logId, $"Error returned from CandleSubscriber ",e));
+                _logger.LogError(_batchLog.Print(logId, $"Error returned from CandleSubscriber ", e));
             }
         }
 
         private void AddCandleToTable(CandleMessage message)
         {
-            var logId = _batchLog.Start($"{nameof(AddCandleToTable)} {message.Market} {message.TimeFrame} StartDate: {message.StartDate} EndDate: {message.EndDate} {message.Candles.Count} Candle(s)");
-            
+            var logId = _batchLog.Start(
+                $"{nameof(AddCandleToTable)} {message.Market} {message.TimeFrame} StartDate: {message.StartDate} EndDate: {message.EndDate} {message.Candles.Count} Candle(s)");
+
             try
             {
                 if (!message.Candles.Any())
                 {
-                    _logger.LogWarning(_batchLog.Print(logId,"Candles missing"));
+                    _logger.LogWarning(_batchLog.Print(logId, "Candles missing"));
                 }
-                
-                _messageClient.PostCandles(message.Candles);
-                
+
+                if (!_messageClient.PostCandles(message.Candles).Result)
+                {
+                    _logger.LogWarning(_batchLog.Print(logId, "Unable to POST Candles"));
+                    return;
+                }
+
                 _logger.LogInformation(_batchLog.Print(logId));
             }
 
