@@ -39,6 +39,13 @@ namespace Archimedes.Service.Repository
         {
             try
             {
+
+                if (!args.Prices.Any())
+                {
+                    _logger.LogError($"Missing prices {args.Message}");
+                    return;
+                }
+
                 var message = args.Message;
                 _messageClient.PostPrice(message);
                 _context.Clients.All.SendAsync("Update", message.Prices.First());

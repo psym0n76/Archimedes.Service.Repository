@@ -34,15 +34,20 @@ namespace Archimedes.Service.Repository
 
         private void Consumer_HandleMessage(object sender, CandleMessageHandlerEventArgs e)
         {
+
             var message = e.Message;
+
             var logId = _batchLog.Start(
                 $"{nameof(Consumer_HandleMessage)} {message.Market} {message.TimeFrame} StartDate: {message.StartDate} EndDate: {message.EndDate} {message.Candles.Count} Candle(s)");
 
+            if (!e.Candles.Any())
+            {
+                _logger.LogError(_batchLog.Print(logId,$"Missing Candles {e.Message}"));
+                return;
+            }
+
             AddCandleToTable(message);
             UpdateMarketMetrics(message);
-
-            //_batchLog.Update(logId,
-            //    $"LastCandleMessage: {message.LastCandleMessage()}");
 
             if (message.TimeFrame != "1Min")
             {
